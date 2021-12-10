@@ -13,7 +13,7 @@ Install requirements:
     python -m venv .venv
     .venv\Scripts\activate
     pip install -r requirements.txt
-
+```
 Run app:
 ```
     python service.py
