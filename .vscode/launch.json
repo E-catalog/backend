@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "service",
+            "name": "simple_service",
             "type": "python",
             "request": "launch",
-            "program": "backend",
+            "program": "simple_service.py",
             "console": "internalConsole"
         }
     ]
