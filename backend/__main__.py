@@ -1,3 +1,8 @@
-from . import app
+from backend.app import app
 
-app.main()
+
+def main():
+    app.run(debug=True)
+
+if __name__ == '__main__':
+    main()
