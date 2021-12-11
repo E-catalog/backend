@@ -8,7 +8,7 @@
             "name": "simple_service",
             "type": "python",
             "request": "launch",
-            "program": "simple_service.py",
+            "module": "backend",
             "console": "internalConsole"
         }
     ]
