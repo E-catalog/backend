@@ -1,8 +1,8 @@
-from backend.app import app_service
+from backend.app import app
 
 
 def main():
-    app_service.run(debug=True)
+    app.run(debug=True)
 
 
 if __name__ == '__main__':

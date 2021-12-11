@@ -16,5 +16,5 @@ Install requirements:
 ```
 Run app:
 ```
-    python service.py
+    python -m backend
 ```
