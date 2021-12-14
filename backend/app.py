@@ -10,7 +10,7 @@ individuals = {
 }
 
 
-@app.route("/api/v1/individuals", methods=['GET'])
+@app.route("/api/v1/individuals/", methods=['GET'])
 def get_all_individuals():
     list_individuals = list(individuals.values())
     return jsonify(list_individuals)
