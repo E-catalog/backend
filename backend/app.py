@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 
 
 app = Flask(__name__)
@@ -10,6 +10,14 @@ individuals = {
 }
 
 
+@app.route("/api/v1/individuals/<int:individual_id>", methods=['PUT'])
+def update_individual(individual_id):
+    individual = individuals[individual_id]
+    individual['title'] = request.json.get('title', individual['title'])
+    individual['place'] = request.json.get('place', individual['place'])
+    return individual
+
+  
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['DELETE'])
 def del_individual(individual_id):
     del individuals[individual_id]
