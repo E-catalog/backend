@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 
 app = Flask(__name__)
@@ -10,6 +10,17 @@ individuals = {
 }
 
 
+@app.route("/api/v1/individuals/", methods=['GET'])
+def get_all_individuals():
+    list_individuals = list(individuals.values())
+    return jsonify(list_individuals)
+
+
+@app.route("/api/v1/individuals/<int:individual_id>", methods=['GET'])
+def get_individual(individual_id):
+    return individuals[individual_id]
+
+  
 @app.route("/api/v1/individuals", methods=['POST'])
 def create_individual():
     new_id = max(individuals) + 1
@@ -18,5 +29,18 @@ def create_individual():
         "title": request.json['title'],
         "place": request.json['place']
         }
-
     return individuals[new_id], 201
+  
+  
+@app.route("/api/v1/individuals/<int:individual_id>", methods=['PUT'])
+def update_individual(individual_id):
+    individual = individuals[individual_id]
+    individual['title'] = request.json.get('title', individual['title'])
+    individual['place'] = request.json.get('place', individual['place'])
+    return individual
+
+  
+@app.route("/api/v1/individuals/<int:individual_id>", methods=['DELETE'])
+def del_individual(individual_id):
+    del individuals[individual_id]
+    return {}, 204
