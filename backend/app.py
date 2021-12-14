@@ -8,6 +8,7 @@ individuals = {
     12: {"id": 12, "title": "Неопознанный объект #12", "place": "Мамаев курган"},
     13: {"id": 13, "title": "Неопознанный объект #13", "place": "Мамаев курган"}
 }
+id = max(individuals)
 
 
 @app.route("/api/v1/individuals/", methods=['GET'])
@@ -21,14 +22,16 @@ def get_individual(individual_id):
     return individuals[individual_id]
 
   
-@app.route("/api/v1/individuals", methods=['POST'])
+@app.route("/api/v1/individuals/", methods=['POST'])
 def create_individual():
-    new_id = max(individuals) + 1
+    global id
+    new_id = id + 1
     individuals[new_id] = {
         "id": new_id,
         "title": request.json['title'],
         "place": request.json['place']
         }
+    id += 1
     return individuals[new_id], 201
   
   
