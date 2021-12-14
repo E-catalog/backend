@@ -13,4 +13,4 @@ individuals = {
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['DELETE'])
 def del_individual(individual_id):
     del individuals[individual_id]
-    return jsonify(individuals)
+    return jsonify(individuals), 202
