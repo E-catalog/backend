@@ -19,4 +19,4 @@ def create_individual():
         "place": request.json['place']
         }
 
-    return individuals[new_id]
+    return individuals[new_id], 201
