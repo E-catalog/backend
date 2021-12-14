@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 
 
 app = Flask(__name__)
@@ -12,7 +12,8 @@ individuals = {
 
 @app.route("/api/v1/individuals", methods=['GET'])
 def get_all_individuals():
-    return individuals
+    list_individuals = list(individuals.values())
+    return jsonify(list_individuals)
 
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['GET'])
