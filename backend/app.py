@@ -3,15 +3,18 @@ from flask import Flask
 
 app = Flask(__name__)
 
-individuals = [
-    {"id": 11, "title": "Неопознанный объект #11", "place": "Мамаев Курган"},
-    {"id": 12, "title": "Неопознанный объект #12", "place": "Мамаев Курган"},
-    {"id": 13, "title": "Неопознанный объект #13", "place": "Мамаев Курган"}
-]
+individuals = {
+    11: {"id": 11, "title": "Неопознанный объект #11", "place": "Мамаев Курган"},
+    12: {"id": 12, "title": "Неопознанный объект #12", "place": "Мамаев Курган"},
+    13: {"id": 13, "title": "Неопознанный объект #13", "place": "Мамаев Курган"}
+}
+
+
+@app.route("/api/v1/individuals", methods=['GET'])
+def get_all_individuals():
+    return individuals
 
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['GET'])
 def get_individual(individual_id):
-    individual = filter(lambda x: x['id'] == individual_id, individuals)
-    return next(individual)
-
+    return individuals[individual_id]
