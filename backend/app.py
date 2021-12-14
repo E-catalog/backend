@@ -12,7 +12,6 @@ individuals = [
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['DELETE'])
 def data(individual_id):
-    global individuals
     individual = next(filter(lambda x: x['id'] == individual_id, individuals))
     individuals.remove(individual)
     return jsonify(individuals)
