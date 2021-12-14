@@ -15,4 +15,4 @@ def update_individual(individual_id):
     individual = individuals[individual_id]
     individual['title'] = request.json.get('title', individual['title'])
     individual['place'] = request.json.get('place', individual['place'])
-    return individual, 201
+    return individual, 202
