@@ -62,12 +62,10 @@ def data(place_id: int):
 
 @app.route("/api/v1/places/", methods=['POST'])
 def create_places():
-    global id
-    new_id = id + 1
+    new_id = max(places) + 1
     places[new_id] = {
         "id": new_id,
         "title": request.json['title'],
         "category": request.json['category']
         }
-    id += 1
     return places[new_id], 201
