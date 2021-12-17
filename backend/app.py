@@ -16,28 +16,6 @@ individuals = {
 
 app = Flask(__name__)
 
-"""
-@app.errorhandler(NotFound)
-def handle_404(e):
-    return errors[404], 404
-
-
-@app.errorhandler(MethodNotAllowed)
-def handle_405(e):
-    return errors[405], 405
-
-
-@app.errorhandler(InternalServerError)
-def handle_500(e):
-    return errors[500], 500
-
-
-@app.errorhandler(Exception)
-def handle_exception(e):
-    if isinstance(e, HTTPException):
-        return e
-    return errors[500], 500
-"""
 
 def handle_404(e):
     return errors[404], 404
