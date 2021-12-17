@@ -74,3 +74,26 @@ def update_individual(individual_id):
 def del_individual(individual_id):
     del individuals[individual_id]
     return {}, 204
+
+
+places = {
+    "id": 5,
+    "title": "Мамаев Курган",
+    "category": "Курган",
+}
+
+@app.route("/api/v1/places/<int:place_id>", methods=['GET'])
+def get_place(place_id: int):
+    return places[place_id]
+
+
+@app.route("/api/v1/places/", methods=['POST'])
+def create_places():
+    new_id = max(places) + 1
+    places[new_id] = {
+        "id": new_id,
+        "title": request.json['title'],
+        "category": request.json['category']
+        }
+    return places[new_id], 201
+
