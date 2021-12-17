@@ -55,9 +55,9 @@ places = {
     "category": "Курган",
 }
 
-@app.route("/api/v1/places/<place_id>", methods=['GET'])
-def data(place_id: int):
-    return(place_id)
+@app.route("/api/v1/places/<int:place_id>", methods=['GET'])
+def get_place(place_id: int):
+    return places[place_id]
 
 
 @app.route("/api/v1/places/", methods=['POST'])
@@ -69,3 +69,4 @@ def create_places():
         "category": request.json['category']
         }
     return places[new_id], 201
+
