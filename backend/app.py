@@ -21,7 +21,7 @@ def get_all_individuals():
 def get_individual(individual_id):
     return individuals[individual_id]
 
-  
+
 @app.route("/api/v1/individuals/", methods=['POST'])
 def create_individual():
     global id
@@ -33,8 +33,8 @@ def create_individual():
         }
     id += 1
     return individuals[new_id], 201
-  
-  
+
+
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['PUT'])
 def update_individual(individual_id):
     individual = individuals[individual_id]
@@ -42,8 +42,32 @@ def update_individual(individual_id):
     individual['place'] = request.json.get('place', individual['place'])
     return individual
 
-  
+
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['DELETE'])
 def del_individual(individual_id):
     del individuals[individual_id]
     return {}, 204
+
+
+places = {
+    "id": 5,
+    "title": "Мамаев Курган",
+    "category": "Курган",
+}
+
+@app.route("/api/v1/places/<place_id>", methods=['GET'])
+def data(place_id: int):
+    return(place_id)
+
+
+@app.route("/api/v1/places/", methods=['POST'])
+def create_places():
+    global id
+    new_id = id + 1
+    places[new_id] = {
+        "id": new_id,
+        "title": request.json['title'],
+        "category": request.json['category']
+        }
+    id += 1
+    return places[new_id], 201
