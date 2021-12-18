@@ -1,5 +1,5 @@
 from typing import Any
-from flask import request, jsonify
+from flask import jsonify
 
 
 Individual = dict[str, Any]
@@ -26,19 +26,19 @@ class IndividualsRepo:
         new_uid = max(self.storage) + 1
         self.storage[new_uid] = {
             "id": new_uid,
-            "title": request.json['title'],
-            "place": request.json['place']
+            "title": individual['title'],
+            "place": individual['place']
             }
         return self.storage[new_uid], 201
 
 
     def update(self, uid: int, individual: Individual) -> Individual:
-        individual = self.storage[uid]
-        individual['title'] = request.json.get('title', individual['title'])
-        individual['place'] = request.json.get('place', individual['place'])
-        return individual
+        updating_individual = self.storage[uid]
+        updating_individual['title'] = individual['title']
+        updating_individual['place'] = individual['place']
+        return updating_individual
 
 
-    def delete(self, uid: int):
+    def delete(self, uid: int) -> None:
         del self.storage[uid]
         return {}, 204
