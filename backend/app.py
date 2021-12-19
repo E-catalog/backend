@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from werkzeug.exceptions import InternalServerError, MethodNotAllowed, NotFound, HTTPException
-from backend.storage.storage import IndividualsRepo
+from backend.storage import IndividualsRepo
 
 
 errors = {
@@ -25,25 +25,25 @@ def handle_500(e):
     return errors[500], 500
 
 
-#def handle_nothttp_exception(e):
-#    if not isinstance(e, HTTPException):
-#        return errors[500], 500
+def handle_nothttp_exception(e):
+    if not isinstance(e, HTTPException):
+        return errors[500], 500
 
 
 app.register_error_handler(NotFound, handle_404)
 app.register_error_handler(MethodNotAllowed, handle_405)
 app.register_error_handler(InternalServerError, handle_500)
-#app.register_error_handler(Exception, handle_nothttp_exception)
+app.register_error_handler(Exception, handle_nothttp_exception)
 
 
 @app.route("/api/v1/individuals/", methods=['GET'])
 def get_all_individuals():
-    individuals_repo.get_all()
+    return individuals_repo.get_all()
 
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['GET'])
 def get_individual(individual_id):
-    individuals_repo.get_by_id(individual_id)
+    return individuals_repo.get_by_id(individual_id)
 
 
 @app.route("/api/v1/individuals/", methods=['POST'])
@@ -52,7 +52,7 @@ def create_individual():
         'title': request.json['title'],
         'place': request.json['place']
     }
-    individuals_repo.add(new_individual)
+    return individuals_repo.add(new_individual)
 
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['PUT'])
@@ -61,12 +61,12 @@ def update_individual(individual_id):
         'title': request.json['title'],
         'place': request.json['place']
     }
-    individuals_repo.update(individual_id, updates)
+    return individuals_repo.update(individual_id, updates)
 
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['DELETE'])
 def del_individual(individual_id):
-    individuals_repo.delete(individual_id)
+    return individuals_repo.delete(individual_id)
 
 
 places = {
