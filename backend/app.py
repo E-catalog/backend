@@ -14,6 +14,12 @@ individuals = {
     13: {"id": 13, "title": "Неопознанный объект #13", "place": "Мамаев курган"}
 }
 
+places = {
+    "id": 5,
+    "title": "Мамаев Курган",
+    "category": "Курган",
+}
+
 app = Flask(__name__)
 
 
@@ -76,12 +82,6 @@ def del_individual(individual_id):
     return {}, 204
 
 
-places = {
-    "id": 5,
-    "title": "Мамаев Курган",
-    "category": "Курган",
-}
-
 @app.route("/api/v1/places/<int:place_id>", methods=['GET'])
 def get_place(place_id: int):
     return places[place_id]
@@ -96,4 +96,18 @@ def create_places():
         "category": request.json['category']
         }
     return places[new_id], 201
+
+
+@app.route("/api/v1/places/<int:places_id>", methods=['DELETE'])
+def del_places(places_id):
+    del places[places_id]
+    return {}, 204
+
+
+@app.route("/api/v1/places/<int:places_id>", methods=['PUT'])
+def change_places(places_id):
+    places =places[places_id]
+    places ['title'] = request.json.get('title',  places['title'])
+    places ['category'] = request.json.get('category', places['category'])
+    return places
 
