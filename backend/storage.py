@@ -6,11 +6,18 @@ Individual = dict[str, Any]
 
 class IndividualsRepo:
 
-    storage = {
-    11: {"id": 11, "title": "Неопознанный объект #11", "place": "Мамаев курган"},
-    12: {"id": 12, "title": "Неопознанный объект #12", "place": "Мамаев курган"},
-    13: {"id": 13, "title": "Неопознанный объект #13", "place": "Мамаев курган"}
-    }
+    def __init__(self) -> None:
+        self.last_id = 13
+        self.storage = {
+            11: {"id": 11, "title": "Неопознанный объект #11", "place": "Мамаев курган"},
+            12: {"id": 12, "title": "Неопознанный объект #12", "place": "Мамаев курган"},
+            13: {"id": 13, "title": "Неопознанный объект #13", "place": "Мамаев курган"}
+            }
+
+
+    def next_id(self) -> int:
+        self.last_id += 1
+        return self.last_id
 
 
     def get_all(self) -> list[Individual]:
@@ -23,12 +30,9 @@ class IndividualsRepo:
 
 
     def add(self, individual: Individual) -> Individual:
-        new_uid = max(self.storage) + 1
-        self.storage[new_uid] = {
-            "id": new_uid,
-            "title": individual['title'],
-            "place": individual['place']
-            }
+        new_uid = self.next_id()
+        individual['id'] = new_uid
+        self.storage[new_uid] = individual
         return self.storage[new_uid], 201
 
 
