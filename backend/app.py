@@ -83,6 +83,12 @@ def del_individual(individual_id):
     return {}, 204
 
 
+@app.route("/api/v1/places/", methods=['GET'])
+def get_all_places():
+    list_places = list(places.values())
+    return jsonify(list_places)
+
+
 @app.route("/api/v1/places/<int:place_id>", methods=['GET'])
 def get_place(place_id: int):
     return places[place_id]
