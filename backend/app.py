@@ -16,7 +16,8 @@ individuals = {
 
 places = {
     1: {"id": 1, "title":"Мамаев Курган", "category": "Курган"},
-    2: {"id": 2, "title":"Красный Курган", "category": "Курган"}
+    2: {"id": 2, "title":"Красный Курган", "category": "Курган"},
+    3: {"id": 3, "title":"Синий Курган", "category": "Курган"}
     }
 
 
