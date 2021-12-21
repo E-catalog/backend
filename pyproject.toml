@@ -7,6 +7,7 @@ authors = ["Daria Veselkova <daria.veselkova@yandex.ru>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 Flask = "^2.0.2"
+SQLAlchemy = "^1.4.28"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.920"

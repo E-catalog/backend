@@ -1,1 +1,1 @@
-# Dummy file to make this directory a package (c)
+# Backend package contains all files and packages related to E-catalog backend
