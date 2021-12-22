@@ -13,10 +13,13 @@ services:
       - backend
 
   backend:
-    image: ecatalog-backend:1.0.0
+    image: dariaveselkova/ecatalog-backend:1.0.0
     env_file:
       - .env
     ports:
       - 5000:5000
     networks:
       - backend
+
+networks:
+  backend:
