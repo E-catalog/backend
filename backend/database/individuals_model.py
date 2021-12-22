@@ -1,5 +1,4 @@
-from typing import Text
-from sqlalchemy import Column, Integer, String, Text, Date
+from sqlalchemy import Column, Integer, String, Text
 from db import Base, engine
 
 
@@ -19,3 +18,7 @@ class SqlIndividualsRepo(Base):
 
     def __repr__(self):
         return f'Индвид: индекс в базе {self.id}, {self.place}, {self.name}, {self.sex}, {self.age}'
+
+
+if __name__ == '__main__':
+    Base.metadata.create_all(bind=engine)
