@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from werkzeug.exceptions import InternalServerError, MethodNotAllowed, NotFound, HTTPException
+from backend.pl_storage import PlacesRepo
 from backend.storage import IndividualsRepo
 
 
@@ -19,6 +20,7 @@ places = {
 
 app = Flask(__name__)
 individuals_repo = IndividualsRepo()
+places_repo = PlacesRepo()
 
 
 def handle_404(e):
@@ -79,36 +81,32 @@ def del_individual(individual_id):
 
 @app.route("/api/v1/places/", methods=['GET'])
 def get_all_places():
-    list_places = list(places.values())
-    return jsonify(list_places)
+    return places_repo.get_all()
 
 
-@app.route("/api/v1/places/<int:place_id>", methods=['GET'])
-def get_place(place_id: int):
-    return places[place_id]
+@app.route("/api/v1/places/<int:places_id>", methods=['GET'])
+def get_place(places_id):
+    return places_repo.get_by_id(places_id)
 
 
 @app.route("/api/v1/places/", methods=['POST'])
-def create_places():
-    new_id = max(places) + 1
-    places[new_id] = {
-        "id": new_id,
-        "title": request.json['title'],
-        "category": request.json['category']
-        }
-    return places[new_id], 201
+def create_place():
+    new_place = {
+        'title': request.json['title'],
+        'category': request.json['category']
+    }
+    return places_repo.add(new_place)
 
 
-@app.route("/api/v1/places/<int:places_id>", methods=['DELETE'])
-def del_places(places_id):
-    del places[places_id]
-    return {}, 204
+@app.route("/api/v1/places/<int:place_id>", methods=['PUT'])
+def update_place(place_id):
+    updates = {
+        'title': request.json['title'],
+        'category': request.json['category']
+    }
+    return places_repo.update(place_id, updates)
 
 
-@app.route("/api/v1/places/<int:places_id>", methods=['PUT'])
-def change_places(places_id):
-    place = places[places_id]
-    place['title'] = request.json.get('title',  place['title'])
-    place['category'] = request.json.get('category', place['category'])
-    return place
-
+@app.route("/api/v1/places/<int:place_id>", methods=['DELETE'])
+def del_place(place_id):
+    return places_repo.delete(place_id)
