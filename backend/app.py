@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from werkzeug.exceptions import InternalServerError, MethodNotAllowed, NotFound, HTTPException
-from backend.storage import IndividualsRepo
+from database.fake_storage import IndividualsRepo
 
 
 errors = {
