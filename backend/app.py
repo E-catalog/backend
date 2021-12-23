@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, json, request, jsonify
 from werkzeug.exceptions import InternalServerError, MethodNotAllowed, NotFound, HTTPException
-from database.fake_storage import IndividualsRepo
+#from backend.database.fake_storage import IndividualsRepo
+from backend.database.storage import SqlIndividualsRepo
 
 
 errors = {
@@ -16,8 +17,8 @@ places = {
 }
 
 app = Flask(__name__)
-individuals_repo = IndividualsRepo()
-
+#individuals_repo = IndividualsRepo()
+individuals_repo = SqlIndividualsRepo()
 
 def handle_404(e):
     return errors[404], 404
@@ -39,7 +40,7 @@ def handle_nothttp_exception(e):
 app.register_error_handler(NotFound, handle_404)
 app.register_error_handler(MethodNotAllowed, handle_405)
 app.register_error_handler(InternalServerError, handle_500)
-app.register_error_handler(Exception, handle_nothttp_exception)
+#app.register_error_handler(Exception, handle_nothttp_exception)
 
 
 @app.route("/api/v1/individuals/", methods=['GET'])
@@ -54,20 +55,24 @@ def get_individual(individual_id):
 
 @app.route("/api/v1/individuals/", methods=['POST'])
 def create_individual():
+    """
     new_individual = {
         'title': request.json['title'],
         'place': request.json['place']
     }
-    return individuals_repo.add(new_individual)
+    """
+    return individuals_repo.add(request.json)
 
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['PUT'])
 def update_individual(individual_id):
+    """
     updates = {
         'title': request.json['title'],
         'place': request.json['place']
     }
-    return individuals_repo.update(individual_id, updates)
+    """
+    return individuals_repo.update(individual_id, request.json)
 
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['DELETE'])

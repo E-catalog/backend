@@ -1,22 +1,25 @@
 from backend.database.db import db_session
 from backend.database.individuals_model import Individuals
+from flask import jsonify
 
 
-class SqlIndividualsRepo():
+class SqlIndividualsRepo:
 
-    def get_all():
+    def get_all(self):
         answer = db_session.query(Individuals).all()
-        for ind in answer:
-            return ind
+        result = [str(ind) for ind in answer]
 
-    def get_by_id(id):
-        return db_session.query(Individuals.id == id)
+        return jsonify(result)
+
+    def get_by_id(self, id):
+        answer = db_session.query(Individuals).filter(Individuals.id == id)
+        return jsonify(answer)
 
     def add():
-
+        pass
 
     def update():
-
+        pass
 
     def delete():
-
+        pass
