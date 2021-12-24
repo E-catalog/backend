@@ -14,9 +14,15 @@ This repository already has the *docker-compose.yml* file with instructions for 
 
 To run the entire app with the Docker Compose use
 ```
-    docker compose up
+    docker compose up -d
 ```
-Alternatively, you may use `docker-compose up` and run the app using docker-compose binary.
+Alternatively, you may use `docker-compose up` and run the app using docker-compose binary. The `-d` or `--detach` flag is used to run containers in the background, so your terminal stays free for other actions.
+
+To stop the entire app use
+```
+    docker-compose stop -t1
+```
+The `-t1` flag sets the stopping time to 1 sec. By default this value is 10 sec.
 
 ### Install requirements
 First of all, we're using Poetry to manage dependencies (and to make our lives easier too).

@@ -11,10 +11,12 @@ errors = {
 }
 
 places = {
-    "id": 5,
-    "title": "Мамаев Курган",
-    "category": "Курган",
-}
+    1: {"id": 1, "title":"Мамаев Курган", "category": "Курган"},
+    2: {"id": 2, "title":"Красный Курган", "category": "Курган"},
+    3: {"id": 3, "title":"Синий Курган", "category": "Курган"}
+    }
+
+
 
 app = Flask(__name__)
 #individuals_repo = IndividualsRepo()
@@ -80,6 +82,12 @@ def del_individual(individual_id):
     return individuals_repo.delete(individual_id)
 
 
+@app.route("/api/v1/places/", methods=['GET'])
+def get_all_places():
+    list_places = list(places.values())
+    return jsonify(list_places)
+
+
 @app.route("/api/v1/places/<int:place_id>", methods=['GET'])
 def get_place(place_id: int):
     return places[place_id]
@@ -104,8 +112,8 @@ def del_places(places_id):
 
 @app.route("/api/v1/places/<int:places_id>", methods=['PUT'])
 def change_places(places_id):
-    places =places[places_id]
-    places ['title'] = request.json.get('title',  places['title'])
-    places ['category'] = request.json.get('category', places['category'])
-    return places
+    place = places[places_id]
+    place['title'] = request.json.get('title',  place['title'])
+    place['category'] = request.json.get('category', place['category'])
+    return place
 
