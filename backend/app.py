@@ -11,16 +11,14 @@ errors = {
 }
 
 places = {
-    1: {"id": 1, "title":"Мамаев Курган", "category": "Курган"},
-    2: {"id": 2, "title":"Красный Курган", "category": "Курган"},
-    3: {"id": 3, "title":"Синий Курган", "category": "Курган"}
-    }
-
-
+    "id": 5,
+    "title": "Мамаев Курган",
+    "category": "Курган",
+}
 
 app = Flask(__name__)
-#individuals_repo = IndividualsRepo()
 individuals_repo = SqlIndividualsRepo()
+
 
 def handle_404(e):
     return errors[404], 404
@@ -42,7 +40,7 @@ def handle_nothttp_exception(e):
 app.register_error_handler(NotFound, handle_404)
 app.register_error_handler(MethodNotAllowed, handle_405)
 app.register_error_handler(InternalServerError, handle_500)
-#app.register_error_handler(Exception, handle_nothttp_exception)
+app.register_error_handler(Exception, handle_nothttp_exception)
 
 
 @app.route("/api/v1/individuals/", methods=['GET'])
@@ -82,12 +80,6 @@ def del_individual(individual_id):
     return individuals_repo.delete(individual_id)
 
 
-@app.route("/api/v1/places/", methods=['GET'])
-def get_all_places():
-    list_places = list(places.values())
-    return jsonify(list_places)
-
-
 @app.route("/api/v1/places/<int:place_id>", methods=['GET'])
 def get_place(place_id: int):
     return places[place_id]
@@ -112,8 +104,8 @@ def del_places(places_id):
 
 @app.route("/api/v1/places/<int:places_id>", methods=['PUT'])
 def change_places(places_id):
-    place = places[places_id]
-    place['title'] = request.json.get('title',  place['title'])
-    place['category'] = request.json.get('category', place['category'])
-    return place
+    places =places[places_id]
+    places ['title'] = request.json.get('title',  places['title'])
+    places ['category'] = request.json.get('category', places['category'])
+    return places
 
