@@ -40,7 +40,7 @@ def handle_nothttp_exception(e):
 app.register_error_handler(NotFound, handle_404)
 app.register_error_handler(MethodNotAllowed, handle_405)
 app.register_error_handler(InternalServerError, handle_500)
-app.register_error_handler(Exception, handle_nothttp_exception)
+#app.register_error_handler(Exception, handle_nothttp_exception)
 
 
 @app.route("/api/v1/individuals/", methods=['GET'])
@@ -61,7 +61,7 @@ def create_individual():
         'place': request.json['place']
     }
     """
-    return individuals_repo.add(request.json)
+    return individuals_repo.add(request.json), 201
 
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['PUT'])
@@ -77,7 +77,7 @@ def update_individual(individual_id):
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['DELETE'])
 def del_individual(individual_id):
-    return individuals_repo.delete(individual_id)
+    return individuals_repo.delete(individual_id), 204
 
 
 @app.route("/api/v1/places/<int:place_id>", methods=['GET'])
