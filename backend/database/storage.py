@@ -6,13 +6,10 @@ from flask import jsonify
 class SqlIndividualsRepo:
 
     def get_all(self):
-        db_response = db_session.query(Individuals).all()
-        all_individuals = [str(ind) for ind in db_response]
-        return jsonify(all_individuals)
+        return db_session.query(Individuals).all()
 
     def get_by_id(self, id: int):
-        individual = db_session.query(Individuals).filter(Individuals.id == id).one()
-        return str(individual)
+        return db_session.query(Individuals).filter(Individuals.id == id).one()
 
     def add(self, new_individual: dict) -> None:
         individual = Individuals(
@@ -40,4 +37,6 @@ class SqlIndividualsRepo:
     def delete(self, id: int) -> None:
         individual = db_session.query(Individuals).filter(Individuals.id == id).one()
         db_session.delete(individual)
-        return {}
+        return {
+            'message': f'Индивид {id} удален из базы данных'
+        }

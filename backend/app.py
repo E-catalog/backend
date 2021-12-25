@@ -43,41 +43,45 @@ app.register_error_handler(InternalServerError, handle_500)
 #app.register_error_handler(Exception, handle_nothttp_exception)
 
 
+def converter(individual):
+    return {
+        'name': individual.name,
+        'place': individual.place,
+        'sex': individual.sex,
+        'age': individual.age,
+        'individual_type': individual.individual_type,
+        'preservation': individual.preservation,
+        'epoch': individual.epoch,
+        'comments': individual.comments
+    }
+
+
 @app.route("/api/v1/individuals/", methods=['GET'])
 def get_all_individuals():
-    return individuals_repo.get_all()
+    response = individuals_repo.get_all()
+    individuals = [converter(ind) for ind in response]
+    return jsonify(individuals), 200
 
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['GET'])
 def get_individual(individual_id):
-    return individuals_repo.get_by_id(individual_id)
+    individual = converter(individuals_repo.get_by_id(individual_id))
+    return jsonify(individual), 200
 
 
 @app.route("/api/v1/individuals/", methods=['POST'])
 def create_individual():
-    """
-    new_individual = {
-        'title': request.json['title'],
-        'place': request.json['place']
-    }
-    """
     return individuals_repo.add(request.json), 201
 
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['PUT'])
 def update_individual(individual_id):
-    """
-    updates = {
-        'title': request.json['title'],
-        'place': request.json['place']
-    }
-    """
-    return individuals_repo.update(individual_id, request.json)
+    return individuals_repo.update(individual_id, request.json), 200
 
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['DELETE'])
 def del_individual(individual_id):
-    return individuals_repo.delete(individual_id), 204
+    return individuals_repo.delete(individual_id), 200
 
 
 @app.route("/api/v1/places/<int:place_id>", methods=['GET'])
