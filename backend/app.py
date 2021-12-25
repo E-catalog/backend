@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from werkzeug.exceptions import InternalServerError, MethodNotAllowed, NotFound, HTTPException
+from backend.pl_storage import PlacesRepo
 from backend.storage import IndividualsRepo
 from backend.ztorage import PlacesRepo
 
@@ -90,6 +91,36 @@ def del_individual(individual_id):
     return individuals_repo.delete(individual_id)
 
 
-@app.route("/api/v1/places/<int:places_id>", methods=['DELETE'])
-def del_places(places_id):
-    return places_repo.delete(places_id)
+
+@app.route("/api/v1/places/", methods=['GET'])
+def get_all_places():
+    return places_repo.get_all()
+
+
+@app.route("/api/v1/places/<int:places_id>", methods=['GET'])
+def get_place(places_id):
+    return places_repo.get_by_id(places_id)
+
+
+@app.route("/api/v1/places/", methods=['POST'])
+def create_place():
+    new_place = {
+        'title': request.json['title'],
+        'category': request.json['category']
+    }
+    return places_repo.add(new_place)
+
+
+@app.route("/api/v1/places/<int:place_id>", methods=['PUT'])
+def update_place(place_id):
+    updates = {
+        'title': request.json['title'],
+        'category': request.json['category']
+    }
+    return places_repo.update(place_id, updates)
+
+
+@app.route("/api/v1/places/<int:place_id>", methods=['DELETE'])
+def del_place(place_id):
+    return places_repo.delete(place_id)
+
