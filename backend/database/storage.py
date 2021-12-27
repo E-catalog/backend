@@ -1,6 +1,6 @@
 from backend.database.db import db_session
-from backend.database.individuals_model import Individuals
-from flask import jsonify
+from backend.database.individuals import Individuals
+from typing import Any
 
 
 class SqlIndividualsRepo:
@@ -11,7 +11,7 @@ class SqlIndividualsRepo:
     def get_by_id(self, id: int):
         return db_session.query(Individuals).get(id)
 
-    def add(self, new_individual: dict) -> dict:
+    def add(self, new_individual: dict[str, Any]) -> dict[str, str]:
         individual = Individuals(
             name=new_individual['name'],
             place=new_individual['place'],
@@ -30,7 +30,7 @@ class SqlIndividualsRepo:
             'message': 'Новый индивид успешно создан'
         }
 
-    def update(self, id: int, update: dict) -> dict:
+    def update(self, id: int, update: dict[str, Any]) -> dict[str, str]:
         individual = db_session.query(Individuals).get(id)
 
         individual.name = update['name']
@@ -48,7 +48,7 @@ class SqlIndividualsRepo:
             'message': 'Данные индивида успешно обновлены'
         }
 
-    def delete(self, id: int) -> dict:
+    def delete(self, id: int) -> dict[str, str]:
         individual = db_session.query(Individuals).get(id)
         db_session.delete(individual)
         return {

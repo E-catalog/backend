@@ -1,6 +1,5 @@
 from flask import Flask, json, request, jsonify
 from werkzeug.exceptions import InternalServerError, MethodNotAllowed, NotFound, HTTPException
-#from backend.database.fake_storage import IndividualsRepo
 from backend.database.storage import SqlIndividualsRepo
 
 
@@ -40,10 +39,10 @@ def handle_nothttp_exception(e):
 app.register_error_handler(NotFound, handle_404)
 app.register_error_handler(MethodNotAllowed, handle_405)
 app.register_error_handler(InternalServerError, handle_500)
-#app.register_error_handler(Exception, handle_nothttp_exception)
+app.register_error_handler(Exception, handle_nothttp_exception)
 
 
-def convert_from_object(sql_individual):
+def converter(sql_individual):
     return {
         'id': sql_individual.id,
         'name': sql_individual.name,
@@ -61,13 +60,13 @@ def convert_from_object(sql_individual):
 @app.route("/api/v1/individuals/", methods=['GET'])
 def get_all_individuals():
     response = individuals_repo.get_all()
-    individuals = [convert_from_object(ind) for ind in response]
+    individuals = [converter(ind) for ind in response]
     return jsonify(individuals), 200
 
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['GET'])
 def get_individual(individual_id):
-    individual = convert_from_object(individuals_repo.get_by_id(individual_id))
+    individual = converter(individuals_repo.get_by_id(individual_id))
     return jsonify(individual), 200
 
 

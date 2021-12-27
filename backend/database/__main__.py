@@ -1,9 +1,9 @@
-from backend.database.individuals_model import Individuals
+from backend.database.db import Base, engine
+from backend.database.individuals import Individuals
 
 
 def main():
-    creator = Individuals()
-    creator.create_table()
+    Base.metadata.create_all(bind=engine)
 
 
 if __name__ == "__main__":
