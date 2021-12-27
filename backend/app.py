@@ -43,29 +43,31 @@ app.register_error_handler(InternalServerError, handle_500)
 #app.register_error_handler(Exception, handle_nothttp_exception)
 
 
-def converter(individual):
+def convert_from_object(sql_individual):
     return {
-        'name': individual.name,
-        'place': individual.place,
-        'sex': individual.sex,
-        'age': individual.age,
-        'individual_type': individual.individual_type,
-        'preservation': individual.preservation,
-        'epoch': individual.epoch,
-        'comments': individual.comments
+        'id': sql_individual.id,
+        'name': sql_individual.name,
+        'place': sql_individual.place,
+        'sex': sql_individual.sex,
+        'age': sql_individual.age,
+        'individual_type': sql_individual.individual_type,
+        'preservation': sql_individual.preservation,
+        'epoch': sql_individual.epoch,
+        'comments': sql_individual.comments,
+        'year_of_excavation': sql_individual.year_of_excavation
     }
 
 
 @app.route("/api/v1/individuals/", methods=['GET'])
 def get_all_individuals():
     response = individuals_repo.get_all()
-    individuals = [converter(ind) for ind in response]
+    individuals = [convert_from_object(ind) for ind in response]
     return jsonify(individuals), 200
 
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['GET'])
 def get_individual(individual_id):
-    individual = converter(individuals_repo.get_by_id(individual_id))
+    individual = convert_from_object(individuals_repo.get_by_id(individual_id))
     return jsonify(individual), 200
 
 

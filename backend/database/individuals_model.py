@@ -20,6 +20,5 @@ class Individuals(Base):
     def __repr__(self):
         return f'Индвид: индекс в базе {self.id}, {self.place}, {self.name}, {self.sex}, {self.age}'
 
-
-if __name__ == '__main__':
-    Base.metadata.create_all(bind=engine)
+    def create_table(self):
+        Base.metadata.create_all(bind=engine)

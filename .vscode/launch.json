@@ -5,11 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "simple_service",
+            "name": "service",
             "type": "python",
             "request": "launch",
             "module": "backend",
             "console": "internalConsole"
+        },
+        {
+          "name": "create_table",
+          "type": "python",
+          "request": "launch",
+          "module": "backend.database",
+          "console": "internalConsole"
         }
     ]
 }
