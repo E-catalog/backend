@@ -3,7 +3,6 @@ from flask import jsonify
 
 
 Individual = dict[str, Any]
-
 class IndividualsRepo:
 
     def __init__(self) -> None:
