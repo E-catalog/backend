@@ -1,7 +1,7 @@
 # Backend
 
 # Contributing
-Since this is a young Python project, we assume that you're already have Python >=3.6 in your system.
+Since this is a young Python project, we assume that you already have Python >=3.6 in your system.
 
 ### Docker
 We use Docker containers to store different services of our project.
@@ -10,19 +10,30 @@ Therefore we advise to install Docker Desktop on your machine (use link https://
 
 This repository already has the *docker-compose.yml* file with instructions for Docker Compose. All you need is to create an *.env* file in the root directory and set environmental variables. Use *.env.default* as a template for this.
 
-:exclamation: *.env* file will contain your personal data (keys, passwords, tokens, etc). Don't forget to add it in the .gitignore - do not share this info with the hole world.
+:exclamation: *.env* file will contain your personal data (keys, passwords, tokens, etc). Don't forget to add it in the *.gitignore* - do not share this info with the hole world.
 
-To run the intire app with the Docker Compose use
+To run the entire app with the Docker Compose use
 ```
     docker compose up -d
 ```
 Alternatively, you may use `docker-compose up` and run the app using docker-compose binary. The `-d` or `--detach` flag is used to run containers in the background, so your terminal stays free for other actions.
 
+To run a specific container
+```
+    docker compose run -d <container_name>
+```
+
 To stop the entire app use
 ```
     docker-compose stop -t1
 ```
-The `-t1` flag sets the stopping time to 1 sec. By default this value is 10 sec.
+Or type the name of the container to stop only this container. The `-t1` flag sets the stopping time to 1 sec. By default this value is 10 sec.
+
+To shut down the entire app use
+```
+    docker compose down
+```
+:exclamation: Note that at the current stage of development this command will erase the hole database from the container (because it exists only there for now). So you should initiate and fill the database again when starting the app.
 
 ### Install requirements
 First of all, we're using Poetry to manage dependencies (and to make our lives easier too).
@@ -48,8 +59,9 @@ Ta-dam! Now you have all you need to start.
 ### Run app:
 To run the project in the terminal use
 ```
-    python -m backend
+    poetry run python -m backend
 ```
+Or you can use 'Run and Debug' if you're using VS Code - the necessary *launch.json* file are already there. Use 'service' to run the app and 'create_table' to create database's tables.
 
 ### Using linter
 We use **wemake-python-styleguide** - "the strictest and most opinionated Python linter ever". Actually it's just a **flake8** plugin with some other useful plugins. Poetry files already have all dependencies, so you'll have the hole package of the linter after runnig `poetry install`.
