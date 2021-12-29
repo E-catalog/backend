@@ -1,9 +1,9 @@
 from backend.database.db import db_session
-from backend.database.individuals import Individuals
+from backend.database.models.individuals import Individuals
 from typing import Any
 
 
-class SqlIndividualsRepo:
+class IndividualsRepo:
 
     def get_all(self):
         return db_session.query(Individuals).all()
