@@ -1,8 +1,7 @@
 from flask import Flask, json, request, jsonify
 from werkzeug.exceptions import InternalServerError, MethodNotAllowed, NotFound, HTTPException
-from backend.database.storage import SqlIndividualsRepo
-from backend.pl_storage import PlacesRepo
-from backend.ztorage import PlacesRepo
+from backend.database.repos.individuals import SqlIndividualsRepo
+from backend.database.repos.places import SqlPlacesRepo
 
 
 errors = {
@@ -13,7 +12,7 @@ errors = {
 
 app = Flask(__name__)
 individuals_repo = SqlIndividualsRepo()
-places_repo = PlacesRepo()
+places_repo = SqlPlacesRepo()
 
 
 def handle_404(e):
@@ -73,51 +72,13 @@ def get_individual(individual_id):
 
 
 @app.route("/api/v1/places/<int:places_id>", methods=['GET'])
-def get_places(places_id):
-    return places_repo.get_by_id(places_id)
+def get_place(place_id):
+    return places_repo.get_by_id(place_id)
 
 
 @app.route("/api/v1/individuals/", methods=['POST'])
 def create_individual():
     return individuals_repo.add(request.json), 201
-
-
-@app.route("/api/v1/individuals/<int:individual_id>", methods=['PUT'])
-def update_individual(individual_id):
-    return individuals_repo.update(individual_id, request.json), 200
-
-
-@app.route("/api/v1/places/", methods=['POST'])
-def change_places():
-    new_places = {
-        'title': request.json['title'],
-        'category': request.json['category']
-    }
-    return places_repo.add(new_places)
-
-
-@app.route("/api/v1/places/<int:places_id>", methods=['PUT'])
-def update_places(places_id):
-    updates = {
-        'title': request.json['title'],
-        'category': request.json['category']
-    }
-    return places_repo.update(places_id, updates)
-
-
-@app.route("/api/v1/individuals/<int:individual_id>", methods=['DELETE'])
-def del_individual(individual_id):
-    return individuals_repo.delete(individual_id), 200
-
-
-@app.route("/api/v1/places/", methods=['GET'])
-def get_all_places():
-    return places_repo.get_all()
-
-
-@app.route("/api/v1/places/<int:places_id>", methods=['GET'])
-def get_place(places_id):
-    return places_repo.get_by_id(places_id)
 
 
 @app.route("/api/v1/places/", methods=['POST'])
@@ -129,6 +90,11 @@ def create_place():
     return places_repo.add(new_place)
 
 
+@app.route("/api/v1/individuals/<int:individual_id>", methods=['PUT'])
+def update_individual(individual_id):
+    return individuals_repo.update(individual_id, request.json), 200
+
+
 @app.route("/api/v1/places/<int:place_id>", methods=['PUT'])
 def update_place(place_id):
     updates = {
@@ -136,6 +102,11 @@ def update_place(place_id):
         'category': request.json['category']
     }
     return places_repo.update(place_id, updates)
+
+
+@app.route("/api/v1/individuals/<int:individual_id>", methods=['DELETE'])
+def del_individual(individual_id):
+    return individuals_repo.delete(individual_id), 200
 
 
 @app.route("/api/v1/places/<int:place_id>", methods=['DELETE'])
