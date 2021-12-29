@@ -1,5 +1,5 @@
 from backend.database.db import db_session
-from backend.database.individuals import Individuals
+from backend.database.models.individuals import Individuals
 from typing import Any
 
 

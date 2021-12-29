@@ -71,7 +71,7 @@ def get_individual(individual_id):
     return jsonify(individual), 200
 
 
-@app.route("/api/v1/places/<int:places_id>", methods=['GET'])
+@app.route("/api/v1/places/<int:place_id>", methods=['GET'])
 def get_place(place_id):
     return places_repo.get_by_id(place_id)
 
