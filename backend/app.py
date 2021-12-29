@@ -1,7 +1,7 @@
 from flask import Flask, json, request, jsonify
 from werkzeug.exceptions import InternalServerError, MethodNotAllowed, NotFound, HTTPException
-from backend.database.repos.individuals import SqlIndividualsRepo
-from backend.database.repos.places import SqlPlacesRepo
+from backend.database.repos.individuals import IndividualsRepo
+from backend.database.repos.places import PlacesRepo
 
 
 errors = {
@@ -11,8 +11,8 @@ errors = {
 }
 
 app = Flask(__name__)
-individuals_repo = SqlIndividualsRepo()
-places_repo = SqlPlacesRepo()
+individuals_repo = IndividualsRepo()
+places_repo = PlacesRepo()
 
 
 def handle_404(e):

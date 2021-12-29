@@ -4,7 +4,7 @@ from flask import jsonify
 
 Places = dict[str, Any]
 
-class SqlPlacesRepo:
+class PlacesRepo:
 
     def __init__(self) -> None:
         self.last_id = 3
