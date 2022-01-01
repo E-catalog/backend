@@ -12,6 +12,7 @@ class IndividualsRepo:
         return db_session.query(Individuals).get(id)
 
     def add(self, new_individual: dict[str, Any]) -> dict[str, str]:
+
         individual = Individuals(
             name=new_individual['name'],
             place=new_individual['place'],
