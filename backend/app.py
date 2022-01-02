@@ -3,6 +3,7 @@ from werkzeug.exceptions import InternalServerError, MethodNotAllowed, NotFound,
 from backend.database.repos.individuals import IndividualsRepo
 from backend.database.repos.places import PlacesRepo
 from pydantic import BaseModel, Field, ValidationError
+from typing import Optional
 
 
 errors = {
@@ -36,19 +37,19 @@ def handle_nothttp_exception(e):
 app.register_error_handler(NotFound, handle_404)
 app.register_error_handler(MethodNotAllowed, handle_405)
 app.register_error_handler(InternalServerError, handle_500)
-app.register_error_handler(Exception, handle_nothttp_exception)
+#app.register_error_handler(Exception, handle_nothttp_exception)
 
 
 class Individual(BaseModel):
-    name: str = Field(alias='name')
-    place: str = Field(alias='place')
-    year_of_excavation: int = Field(alias='year_of_excavation')
-    sex: str = Field(alias='sex')
-    age: str = Field(alias='age')
-    individual_type: str = Field(alias='individual_type')
-    preservation: str = Field(alias='preservation')
-    epoch: str = Field(alias='epoch')
-    comments: str = Field(alias='comments')
+    name: str
+    place: str
+    year_of_excavation: Optional[int]
+    sex: Optional[str]
+    age: Optional[str]
+    individual_type: Optional[str]
+    preservation: Optional[str]
+    epoch: Optional[str]
+    comments: Optional[str]
 
 
 def converter(sql_individual):
@@ -93,10 +94,10 @@ def get_place(place_id):
 def create_individual():
     payload = request.json
     try:
-        Individual(**payload)
+        individual = Individual(**payload)
     except ValidationError as e:
         print(e)
-    return individuals_repo.add(payload), 201
+    return individuals_repo.add(individual), 201
 
 
 @app.route("/api/v1/places/", methods=['POST'])
@@ -112,10 +113,10 @@ def create_place():
 def update_individual(individual_id):
     payload = request.json
     try:
-        Individual(**payload)
+        individual = Individual(**payload)
     except ValidationError as e:
         print(e)
-    return individuals_repo.update(individual_id, payload), 200
+    return individuals_repo.update(individual_id, individual), 200
 
 
 @app.route("/api/v1/places/<int:place_id>", methods=['PUT'])
