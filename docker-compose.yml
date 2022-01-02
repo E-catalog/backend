@@ -13,7 +13,7 @@ services:
       - backend
 
   backend:
-    image: dariaveselkova/ecatalog-backend:1.0.0
+    build: .
     env_file:
       - .env
     ports:

@@ -1,7 +1,9 @@
-from flask import Flask, json, request, jsonify
+from flask import Flask, request, jsonify
 from werkzeug.exceptions import InternalServerError, MethodNotAllowed, NotFound, HTTPException
 from backend.database.repos.individuals import IndividualsRepo
 from backend.database.repos.places import PlacesRepo
+from pydantic import BaseModel, Field, ValidationError
+from typing import Optional
 
 
 errors = {
@@ -35,7 +37,19 @@ def handle_nothttp_exception(e):
 app.register_error_handler(NotFound, handle_404)
 app.register_error_handler(MethodNotAllowed, handle_405)
 app.register_error_handler(InternalServerError, handle_500)
-app.register_error_handler(Exception, handle_nothttp_exception)
+#app.register_error_handler(Exception, handle_nothttp_exception)
+
+
+class Individual(BaseModel):
+    name: str
+    place: str
+    year_of_excavation: Optional[int]
+    sex: Optional[str]
+    age: Optional[str]
+    individual_type: Optional[str]
+    preservation: Optional[str]
+    epoch: Optional[str]
+    comments: Optional[str]
 
 
 def converter(sql_individual):
@@ -78,7 +92,12 @@ def get_place(place_id):
 
 @app.route("/api/v1/individuals/", methods=['POST'])
 def create_individual():
-    return individuals_repo.add(request.json), 201
+    payload = request.json
+    try:
+        individual = Individual(**payload)
+    except ValidationError as e:
+        print(e)
+    return individuals_repo.add(individual), 201
 
 
 @app.route("/api/v1/places/", methods=['POST'])
@@ -92,7 +111,12 @@ def create_place():
 
 @app.route("/api/v1/individuals/<int:individual_id>", methods=['PUT'])
 def update_individual(individual_id):
-    return individuals_repo.update(individual_id, request.json), 200
+    payload = request.json
+    try:
+        individual = Individual(**payload)
+    except ValidationError as e:
+        print(e)
+    return individuals_repo.update(individual_id, individual), 200
 
 
 @app.route("/api/v1/places/<int:place_id>", methods=['PUT'])
