@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import abort, Flask, jsonify, request
 from werkzeug.exceptions import HTTPException, InternalServerError, MethodNotAllowed, NotFound
 from backend.database.repos.individuals import IndividualsRepo
 from backend.database.repos.places import PlacesRepo
@@ -93,6 +93,9 @@ def get_place(place_id):
 @app.route('/api/v1/individuals/', methods=['POST'])
 def create_individual():
     payload = request.json
+    if not payload:
+        abort(400, 'Payload cannot be empty')
+
     try:
         individual = Individual(**payload)
     except ValidationError as error:
@@ -112,6 +115,9 @@ def create_place():
 @app.route('/api/v1/individuals/<int:individual_id>', methods=['PUT'])
 def update_individual(individual_id):
     payload = request.json
+    if not payload:
+        abort(400, 'Payload cannot be empty')
+
     try:
         individual = Individual(**payload)
     except ValidationError as error:
