@@ -38,6 +38,6 @@ class PlacesRepo:
         updating_places['category'] = places['category']
         return updating_places
 
-    def delete(self, uid: int) -> None:
+    def delete(self, uid: int) -> Any:
         del self.pl_storage[uid]
         return {}, 204
