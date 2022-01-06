@@ -26,13 +26,13 @@ class PlacesRepo:
     def get_by_id(self, uid: int) -> Any:
         return self.pl_storage[uid]
 
-    def add(self, places: any) -> Any:
+    def add(self, places: Any) -> Any:
         new_uid = self.next_id()
         places['id'] = new_uid
         self.pl_storage[new_uid] = places
         return self.pl_storage[new_uid], 201
 
-    def update(self, uid: int, places: any) ->Any:
+    def update(self, uid: int, places: Any) -> Any:
         updating_places = self.pl_storage[uid]
         updating_places['title'] = places['title']
         updating_places['category'] = places['category']
