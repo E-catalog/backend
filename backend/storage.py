@@ -20,7 +20,8 @@ class IndividualsRepo:
 
 
     def get_all(self) -> list[Individual]:
-        all_individuals = list(self.storage.values())
+        all_individuals
+        ge.values())
         return jsonify(all_individuals)
 
 
