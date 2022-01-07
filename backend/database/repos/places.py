@@ -1,6 +1,6 @@
 from typing import Any
-from flask import jsonify
 
+from flask import jsonify
 
 Places = dict[str, Any]
 

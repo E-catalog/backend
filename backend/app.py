@@ -1,10 +1,11 @@
-from flask import abort, Flask, jsonify, request
-from werkzeug.exceptions import HTTPException, InternalServerError, MethodNotAllowed, NotFound
-from backend.database.repos.individuals import IndividualsRepo
-from backend.database.repos.places import PlacesRepo
-from pydantic import BaseModel, ValidationError
 from typing import Optional
 
+from flask import Flask, abort, jsonify, request
+from pydantic import BaseModel, ValidationError
+from werkzeug.exceptions import HTTPException, InternalServerError, MethodNotAllowed, NotFound
+
+from backend.database.repos.individuals import IndividualsRepo
+from backend.database.repos.places import PlacesRepo
 
 errors = {
     'NotFound': {'error': '404', 'message': 'Not found'},
