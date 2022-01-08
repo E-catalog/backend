@@ -1,3 +1,1 @@
-"""
-Models module contains all files of tables' models
-"""
+"""Models module contains all files of tables' models."""

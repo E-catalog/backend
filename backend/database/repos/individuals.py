@@ -10,7 +10,6 @@ class IndividualsRepo:
     def get_by_id(self, id: int):
         return db_session.query(Individuals).get(id)
 
-
     def add(self, individual) -> dict[str, str]:
         new_individual = Individuals(
             name=individual.name,
@@ -21,12 +20,12 @@ class IndividualsRepo:
             individual_type=individual.individual_type,
             preservation=individual.preservation,
             epoch=individual.epoch,
-            comments=individual.comments
-            )
+            comments=individual.comments,
+        )
         db_session.add(new_individual)
         db_session.commit()
         return {
-            'message': 'Новый индивид успешно создан'
+            'message': 'Новый индивид успешно создан',
         }
 
     def update(self, id: int, update) -> dict[str, str]:
@@ -44,12 +43,12 @@ class IndividualsRepo:
 
         db_session.commit()
         return {
-            'message': 'Данные индивида успешно обновлены'
+            'message': 'Данные индивида успешно обновлены',
         }
 
     def delete(self, id: int) -> dict[str, str]:
         individual = db_session.query(Individuals).get(id)
         db_session.delete(individual)
         return {
-            'message': f'Индивид {id} удален из базы данных'
+            'message': f'Индивид {id} удален из базы данных',
         }

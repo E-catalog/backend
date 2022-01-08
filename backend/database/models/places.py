@@ -12,6 +12,5 @@ class Places(Base):
     coordinates = Column(String)
     comments = Column(Text)
 
-
     def __repr__(self):
         return f'Индвид: индекс в базе {self.id}, {self.place}, {self.name}, {self.sex}, {self.age}'
