@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 from typing import Optional
 
 from flask import Flask, abort, jsonify, request
@@ -13,28 +14,21 @@ individuals_repo = IndividualsRepo()
 places_repo = PlacesRepo()
 logger = logging.getLogger(__name__)
 
-errors = {
-    'BadRequest': {'error': '400', 'message': 'Bad request'},
-    'NotFound': {'error': '404', 'message': 'Not found'},
-    'MethodNotAllowed': {'error': '405', 'message': 'Method not allowed'},
-    'InernalServerError': {'error': '500', 'message': 'Internal server error'},
-}
-
 
 def handle_bad_request(error: BadRequest):
-    return errors['BadRequest'], 400
+    return {'error': 'Bad request'}, 400
 
 
 def handle_not_found(error: NotFound):
-    return errors['NotFound'], 404
+    return {'error': 'Not found'}, 404
 
 
 def handle_method_not_allowed(error: MethodNotAllowed):
-    return errors['MethodNotAllowed'], 405
+    return {'error': 'Method not allowed'}, 405
 
 
 def handle_internal_server_error(error: InternalServerError):
-    return errors['InernalServerError'], 500
+    return {'error': 'Internal server error'}, 500
 
 
 app.register_error_handler(BadRequest, handle_bad_request)
@@ -103,7 +97,7 @@ def create_individual():
         individual = Individual(**payload)
     except ValidationError as error:
         logger.info('Ошибка в процессе pydantic-валидации: %s', error)
-        abort(400, 'Неверный тип данных в запросе')
+        abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
     return individuals_repo.add(individual), 201
 
@@ -111,21 +105,21 @@ def create_individual():
 @app.route('/api/v1/places/', methods=['POST'])
 def create_place():
     data = request.json
-    if data:
-        new_place = {
-            'title': data['title'],
-            'category': data['category'],
-        }
-        return places_repo.add(new_place)
-    else:
-        abort(400, 'Тело запроса не может быть пустым')
+    if not data:
+        abort(HTTPStatus.BAD_REQUEST, 'Тело запроса не может быть пустым')
+
+    new_place = {
+        'title': data['title'],
+        'category': data['category'],
+    }
+    return places_repo.add(new_place)
 
 
 @app.route('/api/v1/individuals/<int:individual_id>', methods=['PUT'])
 def update_individual(individual_id):
     payload = request.json
     if not payload:
-        abort(400, 'Тело запроса не может быть пустым')
+        abort(HTTPStatus.BAD_REQUEST, 'Тело запроса не может быть пустым')
 
     try:
         individual = Individual(**payload)
@@ -139,14 +133,14 @@ def update_individual(individual_id):
 @app.route('/api/v1/places/<int:place_id>', methods=['PUT'])
 def update_place(place_id):
     data = request.json
-    if data:
-        updates = {
-            'title': data['title'],
-            'category': data['category'],
-        }
-        return places_repo.update(place_id, updates)
-    else:
-        abort(400, 'Тело запроса не может быть пустым')
+    if not data:
+        abort(HTTPStatus.BAD_REQUEST, 'Тело запроса не может быть пустым')
+
+    updates = {
+        'title': data['title'],
+        'category': data['category'],
+    }
+    return places_repo.update(place_id, updates)
 
 
 @app.route('/api/v1/individuals/<int:individual_id>', methods=['DELETE'])

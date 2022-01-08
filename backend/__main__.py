@@ -3,7 +3,7 @@ from backend.config import config
 
 
 def main():
-    app.run(config.host, config.port)
+    app.run(host=config.host, port=config.port)
 
 
 if __name__ == '__main__':
