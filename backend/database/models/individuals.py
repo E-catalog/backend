@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text
+
 from backend.database.db import Base
 
 
@@ -17,4 +18,10 @@ class Individuals(Base):
     comments = Column(Text)
 
     def __repr__(self):
-        return f'Индвид: индекс в базе {self.id}, {self.place}, {self.name}, {self.sex}, {self.age}'
+        return 'Индвид: индекс [{uid}], {place}, {name}, {sex}, {age}'.format(
+            uid=self.id,
+            place=self.place,
+            name=self.name,
+            sex=self.sex,
+            age=self.age,
+        )

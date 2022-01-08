@@ -1,6 +1,6 @@
 from typing import Any
-from flask import jsonify
 
+from flask import jsonify
 
 Places = dict[str, Any]
 
@@ -39,5 +39,5 @@ class PlacesRepo:
         return updating_places
 
     def delete(self, uid: int) -> Any:
-        del self.pl_storage[uid]
+        self.pl_storage.pop(uid)
         return {}, 204

@@ -1,3 +1,5 @@
+from flask import abort
+
 from backend.database.db import db_session
 from backend.database.models.individuals import Individuals
 
@@ -31,20 +33,23 @@ class IndividualsRepo:
     def update(self, id: int, update) -> dict[str, str]:
         individual = db_session.query(Individuals).get(id)
 
-        individual.name = update.name
-        individual.place = update.place
-        individual.sex = update.sex
-        individual.age = update.age
-        individual.year_of_excavation = update.year_of_excavation
-        individual.individual_type = update.individual_type
-        individual.preservation = update.preservation
-        individual.epoch = update.epoch
-        individual.comments = update.comments
+        if individual:
+            individual.name = update.name
+            individual.place = update.place
+            individual.sex = update.sex
+            individual.age = update.age
+            individual.year_of_excavation = update.year_of_excavation
+            individual.individual_type = update.individual_type
+            individual.preservation = update.preservation
+            individual.epoch = update.epoch
+            individual.comments = update.comments
 
-        db_session.commit()
-        return {
-            'message': 'Данные индивида успешно обновлены',
-        }
+            db_session.commit()
+            return {
+                'message': 'Данные индивида успешно обновлены',
+            }
+        else:
+            abort(400, 'Такого индивида нет в базе')
 
     def delete(self, id: int) -> dict[str, str]:
         individual = db_session.query(Individuals).get(id)

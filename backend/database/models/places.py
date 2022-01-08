@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text
+
 from backend.database.db import Base
 
 
@@ -13,4 +14,4 @@ class Places(Base):
     comments = Column(Text)
 
     def __repr__(self):
-        return f'Индвид: индекс в базе {self.id}, {self.place}, {self.name}, {self.sex}, {self.age}'
+        return f'Место: индекс в базе {self.id}, {self.place}'
