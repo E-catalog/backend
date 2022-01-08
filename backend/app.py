@@ -21,7 +21,7 @@ errors = {
 }
 
 
-def handle_bad_request(error):
+def handle_bad_request(error: BadRequest):
     return errors['BadRequest'], 400
 
 
@@ -29,11 +29,11 @@ def handle_not_found(error: NotFound):
     return errors['NotFound'], 404
 
 
-def handle_method_not_allowed(error):
+def handle_method_not_allowed(error: MethodNotAllowed):
     return errors['MethodNotAllowed'], 405
 
 
-def handle_internal_server_error(error):
+def handle_internal_server_error(error: InternalServerError):
     return errors['InernalServerError'], 500
 
 
