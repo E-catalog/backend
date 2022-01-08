@@ -85,7 +85,7 @@
         "# SageMath parsed files": true,
         "*.sage.py": true,
         "# Environments": true,
-        ".env": true,
+
         ".venv": true,
         "env/": true,
         "venv/": true,
@@ -192,7 +192,7 @@
         "# SageMath parsed files": true,
         "*.sage.py": true,
         "# Environments": true,
-        ".env": true,
+
         ".venv": true,
         "env/": true,
         "venv/": true,
