@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text
 
-from backend.database.db import Base
+from backend.database.session import Base
 
 
 class Individuals(Base):

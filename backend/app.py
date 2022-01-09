@@ -6,8 +6,8 @@ from flask import Flask, abort, jsonify, request
 from pydantic import BaseModel, ValidationError
 from werkzeug.exceptions import BadRequest, InternalServerError, MethodNotAllowed, NotFound
 
-from backend.database.repos.individuals import IndividualsRepo
-from backend.database.repos.places import PlacesRepo
+from backend.repos.individuals import IndividualsRepo
+from backend.repos.places import PlacesRepo
 
 app = Flask(__name__)
 individuals_repo = IndividualsRepo()

@@ -1,4 +1,5 @@
-from backend.database.db import Base, engine
+from backend.database.session import Base, engine
+from backend.database.models import *
 
 
 def main():
