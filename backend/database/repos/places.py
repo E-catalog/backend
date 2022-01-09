@@ -1,43 +1,49 @@
-from typing import Any
-from flask import jsonify
-
-
-Places = dict[str, Any]
+from backend.database.db import db_session
+from backend.database.models.individuals import Places
 
 
 class PlacesRepo:
 
-    def __init__(self) -> None:
-        self.last_id = 3
-        self.pl_storage = {
-            1: {'id': 1, 'title': 'Мамаев Курган', 'category': 'Курган'},
-            2: {'id': 2, 'title': 'Красный Курган', 'category': 'Курган'},
-            3: {'id': 3, 'title': 'Синий Курган', 'category': 'Курган'},
+
+    def get_all(self):
+        return db_session.query(Places).all()
+
+    def get_by_id(self, id: int):
+        return db_session.query(Places).get(id)    #заменить на id?
+
+    def add(self, places) -> dict[str, str,]:
+        new_places = places(
+            name =places.name,
+            id =places.id,
+            head_of_excavations =places.head_of_excavations,
+            type_of_burial_site =places.type_of_burial_site,
+            coordinates = places.coordinates,
+            comments = places.commments,
+        )
+        db_session.add(new_places)
+        db_session.commit()
+        return {
+            'message': 'Новое место раскопок успешно создано',
         }
 
-    def next_id(self) -> int:
-        self.last_id += 1
-        return self.last_id
 
-    def get_all(self) -> Any:
-        all_places = list(self.pl_storage.values())
-        return jsonify(all_places)
+    def update(self, id: int, update) -> dict[str, str]:
+        places = db_session.query(Places).get(id)
 
-    def get_by_id(self, uid: int) -> Any:
-        return self.pl_storage[uid]
+        places.name = update.name
+        places.id = update.id
+        places.head_of_excavations = update.head_of_excavations
+        places.type_of_burial_site = update.type_of_burial_site
+        places.coordinates = update.coordinates
+        places.comments = update.commments
 
-    def add(self, places: Any) -> Any:
-        new_uid = self.next_id()
-        places['id'] = new_uid
-        self.pl_storage[new_uid] = places
-        return self.pl_storage[new_uid], 201
+        db_session.commit()
+        return{
+            'message': 'Данные места раскопок успешно обновлены'
+        }
 
-    def update(self, uid: int, places: Any) -> Any:
-        updating_places = self.pl_storage[uid]
-        updating_places['title'] = places['title']
-        updating_places['category'] = places['category']
-        return updating_places
-
-    def delete(self, uid: int) -> Any:
-        del self.pl_storage[uid]
-        return {}, 204
+    def delete(self, id: int) -> dict[str, str]:
+        del self.pl_storage[id]
+        return {
+            'message': f'Место раскопок {id} удалено из базы данных'
+        }
