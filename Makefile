@@ -2,8 +2,8 @@
 export
 
 lint:
-	@mypy weedly
-	@flake8 weedly
+	@mypy backend
+	@flake8 backend
 
 
 test:
