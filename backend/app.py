@@ -91,7 +91,7 @@ def get_place(place_id):
 def create_individual():
     payload = request.json
     if not payload:
-        abort(400, 'Тело запроса не может быть пустым')
+        abort(HTTPStatus.BAD_REQUEST, 'Тело запроса не может быть пустым')
 
     try:
         individual = Individual(**payload)
@@ -125,7 +125,7 @@ def update_individual(individual_id):
         individual = Individual(**payload)
     except ValidationError as error:
         logger.info('Ошибка в процессе pydantic-валидации: %s', error)
-        abort(400, 'Неверный тип данных в запросе')
+        abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
     return individuals_repo.update(individual_id, individual), 200
 
