@@ -56,6 +56,7 @@ class IndividualsRepo:
     def delete(self, id: int) -> dict[str, str]:
         individual = db_session.query(Individuals).get(id)
         db_session.delete(individual)
+        db_session.commit()
         return {
             'message': f'Индивид {id} удален из базы данных',
         }
