@@ -1,5 +1,5 @@
+from backend.database.models import *  # noqa: F401, WPS347, F403
 from backend.database.session import Base, engine
-from backend.database.models import *
 
 
 def main():
