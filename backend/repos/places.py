@@ -1,8 +1,5 @@
-from typing import Any
-
-from backend.database.models.individuals import Places
-from backend.database.session import db_session
 from backend.database.models.places import Places
+from backend.database.session import db_session
 
 
 class PlacesRepo:
@@ -10,39 +7,36 @@ class PlacesRepo:
     def get_all(self) -> list[Places]:
         return db_session.query(Places).all()
 
-    def get_by_id(self, id: int):
-        return db_session.query(Places).get(id)    #заменить на id?
+    def get_by_id(self, uid: int):
+        return db_session.query(Places).get(uid)
 
     def add(self, places) -> Places:
-        new_places = places(
-            name =places.name,
-            id =places.id,
-            head_of_excavations =places.head_of_excavations,
-            type_of_burial_site =places.type_of_burial_site,
-            coordinates = places.coordinates,
-            comments = places.commments,
+        new_places = Places(
+            name=places.name,
+            id=places.id,
+            head_of_excavations=places.head_of_excavations,
+            type_of_burial_site=places.type_of_burial_site,
+            coordinates=places.coordinates,
+            comments=places.commments,
         )
         db_session.add(new_places)
         db_session.commit()
-        return {
-            'message': 'Новое место раскопок успешно создано',
-        }
-
+        return new_places
 
     def update(self, id: int, update) -> Places:
-        places = db_session.query(Places).get(id)
+        place = db_session.query(Places).get(id)
 
-        places.name = update.name
-        places.id = update.id
-        places.head_of_excavations = update.head_of_excavations
-        places.type_of_burial_site = update.type_of_burial_site
-        places.coordinates = update.coordinates
-        places.comments = update.commments
+        place.name = update.name
+        place.id = update.id
+        place.head_of_excavations = update.head_of_excavations
+        place.type_of_burial_site = update.type_of_burial_site
+        place.coordinates = update.coordinates
+        place.comments = update.commments
 
         db_session.commit()
-        return{
-            'message': 'Данные места раскопок успешно обновлены'
-        }
+        return place
 
     def delete(self, id: int) -> None:
-        del self.pl_storage[id]
+        individual = db_session.query(Places).get(id)
+        db_session.delete(individual)
+        db_session.commit()
