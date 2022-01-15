@@ -13,11 +13,10 @@ class PlacesRepo:
     def add(self, places) -> Places:
         new_places = Places(
             name=places.name,
-            id=places.id,
             head_of_excavations=places.head_of_excavations,
             type_of_burial_site=places.type_of_burial_site,
             coordinates=places.coordinates,
-            comments=places.commments,
+            comments=places.comments,
         )
         db_session.add(new_places)
         db_session.commit()

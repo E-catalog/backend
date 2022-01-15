@@ -51,9 +51,14 @@ class Individual(BaseModel):
 class Places(BaseModel):
     name: str
     head_of_excavations: Optional[str]
-    type_of_burial_site:   Optional[str]
-    coordinates:   Optional[str]
-    comments:   Optional[str]
+    type_of_burial_site: Optional[str]
+    coordinates: Optional[str]
+    comments: Optional[str]
+    id: int
+
+    class Config:
+        orm_mode = True
+
 
 
 def converter(sql_individual):
@@ -70,7 +75,7 @@ def converter(sql_individual):
         'year_of_excavation': sql_individual.year_of_excavation,
     }
 
-def converterr(sql_places):
+def converter_place(sql_places):
     return {
         'id': sql_places.id,
         'name': sql_places.name,
@@ -92,7 +97,7 @@ def get_all_individuals():
 @app.route('/api/v1/places/', methods=['GET'])
 def get_all_places():
     response = places_repo.get_all()
-    places = [converter(ind) for ind in response]
+    places = [converter_place(ind) for ind in response]
     return jsonify(places), 200
 
 
@@ -104,7 +109,7 @@ def get_individual(individual_id):
 
 @app.route('/api/v1/places/<int:place_id>', methods=['GET'])
 def get_place(place_id):
-    place = converter(places_repo.get_by_id(place_id))
+    place = converter_place(places_repo.get_by_id(place_id))
     return jsonify(place), 200
 
 
@@ -133,7 +138,9 @@ def create_place():
         place = Places(**data)
     except ValidationError as error:
         print(error)
-    return places_repo.add(place), 201
+    entity = places_repo.add(place)
+    new_place = Places.from_orm(entity)
+    return new_place.dict(), 201
 
 
 @app.route('/api/v1/individuals/<int:individual_id>', methods=['PUT'])
@@ -171,4 +178,5 @@ def del_individual(individual_id):
 
 @app.route('/api/v1/places/<int:place_id>', methods=['DELETE'])
 def del_place(place_id):
-    return places_repo.delete(place_id)
+    places_repo.delete(place_id)
+    return {}, 204
