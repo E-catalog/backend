@@ -153,8 +153,10 @@ def update_individual(individual_id):
 
 @app.route('/api/v1/places/<int:place_id>', methods=['PUT'])
 def update_place(place_id):
-
     payload = request.json
+    if not payload:
+        abort(HTTPStatus.BAD_REQUEST, 'Тело запроса не может быть пустым')
+
     try:
         place = Places(**payload)
     except ValidationError as error:
