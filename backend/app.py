@@ -125,9 +125,12 @@ def create_individual():
 
 @app.route('/api/v1/places/', methods=['POST'])
 def create_place():
-    payload = request.json
+    data = request.json
+    if not data:
+        abort(HTTPStatus.BAD_REQUEST, 'Тело запроса не может быть пустым')
+
     try:
-        place = Places(**payload)
+        place = Places(**data)
     except ValidationError as error:
         print(error)
     return places_repo.add(place), 201
