@@ -1,4 +1,8 @@
 {
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+
     "search.exclude": {
         "# Byte-compiled / optimized / DLL files": true,
         "**/__pycache__": true,
@@ -85,7 +89,7 @@
         "# SageMath parsed files": true,
         "*.sage.py": true,
         "# Environments": true,
-        ".env": true,
+
         ".venv": true,
         "env/": true,
         "venv/": true,
@@ -192,7 +196,7 @@
         "# SageMath parsed files": true,
         "*.sage.py": true,
         "# Environments": true,
-        ".env": true,
+
         ".venv": true,
         "env/": true,
         "venv/": true,

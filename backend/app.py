@@ -48,6 +48,13 @@ class Individual(BaseModel):
     epoch: Optional[str]
     comments: Optional[str]
 
+class Places(BaseModel):
+    name: str
+    head_of_excavations: Optional[str]
+    type_of_burial_site:   Optional[str]
+    coordinates:   Optional[str]
+    comments:   Optional[str]
+
 
 def converter(sql_individual):
     return {
@@ -63,6 +70,17 @@ def converter(sql_individual):
         'year_of_excavation': sql_individual.year_of_excavation,
     }
 
+def converterr(sql_places):
+    return {
+        'id': sql_places.id,
+        'name': sql_places.name,
+        'head_of_excavations': sql_places.head_of_excavations,
+        'type_of_burial_site': sql_places.type_of_burial_site,
+        'comments': sql_places.comments,
+        'coordinates': sql_places.coordinates,
+        }
+
+
 
 @app.route('/api/v1/individuals/', methods=['GET'])
 def get_all_individuals():
@@ -73,7 +91,9 @@ def get_all_individuals():
 
 @app.route('/api/v1/places/', methods=['GET'])
 def get_all_places():
-    return places_repo.get_all()
+    response = places_repo.get_all()
+    places = [converter(ind) for ind in response]
+    return jsonify(places), 200
 
 
 @app.route('/api/v1/individuals/<int:individual_id>', methods=['GET'])
@@ -84,7 +104,8 @@ def get_individual(individual_id):
 
 @app.route('/api/v1/places/<int:place_id>', methods=['GET'])
 def get_place(place_id):
-    return places_repo.get_by_id(place_id)
+    place = converter(places_repo.get_by_id(place_id))
+    return jsonify(place), 200
 
 
 @app.route('/api/v1/individuals/', methods=['POST'])
@@ -108,11 +129,11 @@ def create_place():
     if not data:
         abort(HTTPStatus.BAD_REQUEST, 'Тело запроса не может быть пустым')
 
-    new_place = {
-        'title': data['title'],
-        'category': data['category'],
-    }
-    return places_repo.add(new_place)
+    try:
+        place = Places(**data)
+    except ValidationError as error:
+        print(error)
+    return places_repo.add(place), 201
 
 
 @app.route('/api/v1/individuals/<int:individual_id>', methods=['PUT'])
@@ -132,15 +153,15 @@ def update_individual(individual_id):
 
 @app.route('/api/v1/places/<int:place_id>', methods=['PUT'])
 def update_place(place_id):
-    data = request.json
-    if not data:
+    payload = request.json
+    if not payload:
         abort(HTTPStatus.BAD_REQUEST, 'Тело запроса не может быть пустым')
 
-    updates = {
-        'title': data['title'],
-        'category': data['category'],
-    }
-    return places_repo.update(place_id, updates)
+    try:
+        place = Places(**payload)
+    except ValidationError as error:
+        print(error)
+    return places_repo.update(place_id, place), 200
 
 
 @app.route('/api/v1/individuals/<int:individual_id>', methods=['DELETE'])
