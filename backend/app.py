@@ -1,45 +1,40 @@
-from flask import Flask, request, jsonify
-from werkzeug.exceptions import HTTPException, InternalServerError, MethodNotAllowed, NotFound
-from werkzeug.wrappers import response
-from backend.database.models import places
-from backend.database.repos.individuals import IndividualsRepo
-from backend.database.repos.places import PlacesRepo
-from pydantic import BaseModel, ValidationError
+import logging
+from http import HTTPStatus
 from typing import Optional
 
+from flask import Flask, abort, jsonify, request
+from pydantic import BaseModel, ValidationError
+from werkzeug.exceptions import BadRequest, InternalServerError, MethodNotAllowed, NotFound
 
-errors = {
-    'NotFound': {'error': '404', 'message': 'Not found'},
-    'MethodNotAllowed': {'error': '405', 'message': 'Method not allowed'},
-    'InernalServerError': {'error': '500', 'message': 'Internal server error'},
-}
+from backend.repos.individuals import IndividualsRepo
+from backend.repos.places import PlacesRepo
 
 app = Flask(__name__)
 individuals_repo = IndividualsRepo()
 places_repo = PlacesRepo()
+logger = logging.getLogger(__name__)
 
 
-def handle_not_found(error):
-    return errors['NotFound'], 404
+def handle_bad_request(error: BadRequest):
+    return {'error': 'Bad request'}, 400
 
 
-def handle_method_not_allowed(error):
-    return errors['MethodNotAllowed'], 405
+def handle_not_found(error: NotFound):
+    return {'error': 'Not found'}, 404
 
 
-def handle_internal_server_error(error):
-    return errors['InernalServerError'], 500
+def handle_method_not_allowed(error: MethodNotAllowed):
+    return {'error': 'Method not allowed'}, 405
 
 
-def handle_nothttp_exception(error):
-    if not isinstance(error, HTTPException):
-        return errors['InternalServerError'], 500
+def handle_internal_server_error(error: InternalServerError):
+    return {'error': 'Internal server error'}, 500
 
 
+app.register_error_handler(BadRequest, handle_bad_request)
 app.register_error_handler(NotFound, handle_not_found)
 app.register_error_handler(MethodNotAllowed, handle_method_not_allowed)
 app.register_error_handler(InternalServerError, handle_internal_server_error)
-app.register_error_handler(Exception, handle_nothttp_exception)
 
 
 class Individual(BaseModel):
@@ -116,10 +111,15 @@ def get_place(place_id):
 @app.route('/api/v1/individuals/', methods=['POST'])
 def create_individual():
     payload = request.json
+    if not payload:
+        abort(HTTPStatus.BAD_REQUEST, 'Тело запроса не может быть пустым')
+
     try:
         individual = Individual(**payload)
     except ValidationError as error:
-        print(error)
+        logger.info('Ошибка в процессе pydantic-валидации: %s', error)
+        abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
+
     return individuals_repo.add(individual), 201
 
 
@@ -136,15 +136,21 @@ def create_place():
 @app.route('/api/v1/individuals/<int:individual_id>', methods=['PUT'])
 def update_individual(individual_id):
     payload = request.json
+    if not payload:
+        abort(HTTPStatus.BAD_REQUEST, 'Тело запроса не может быть пустым')
+
     try:
         individual = Individual(**payload)
     except ValidationError as error:
-        print(error)
+        logger.info('Ошибка в процессе pydantic-валидации: %s', error)
+        abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
+
     return individuals_repo.update(individual_id, individual), 200
 
 
 @app.route('/api/v1/places/<int:place_id>', methods=['PUT'])
 def update_place(place_id):
+
     payload = request.json
     try:
         place = Places(**payload)

@@ -1,5 +1,9 @@
-from backend.database.db import db_session
+from http import HTTPStatus
+
+from flask import abort
+
 from backend.database.models.individuals import Individuals
+from backend.database.session import db_session
 
 
 class IndividualsRepo:
@@ -31,6 +35,9 @@ class IndividualsRepo:
     def update(self, id: int, update) -> dict[str, str]:
         individual = db_session.query(Individuals).get(id)
 
+        if not individual:
+            abort(HTTPStatus.BAD_REQUEST, 'Такого индивида нет в базе')
+
         individual.name = update.name
         individual.place = update.place
         individual.sex = update.sex
@@ -49,6 +56,7 @@ class IndividualsRepo:
     def delete(self, id: int) -> dict[str, str]:
         individual = db_session.query(Individuals).get(id)
         db_session.delete(individual)
+        db_session.commit()
         return {
             'message': f'Индивид {id} удален из базы данных',
         }

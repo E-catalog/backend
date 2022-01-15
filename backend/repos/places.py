@@ -1,17 +1,19 @@
-from backend.database.db import db_session
+from typing import Any
+
 from backend.database.models.individuals import Places
+from backend.database.session import db_session
+from backend.database.models.places import Places
 
 
 class PlacesRepo:
 
-
-    def get_all(self):
+    def get_all(self) -> list[Places]:
         return db_session.query(Places).all()
 
     def get_by_id(self, id: int):
         return db_session.query(Places).get(id)    #заменить на id?
 
-    def add(self, places) -> dict[str, str,]:
+    def add(self, places) -> Places:
         new_places = places(
             name =places.name,
             id =places.id,
@@ -27,7 +29,7 @@ class PlacesRepo:
         }
 
 
-    def update(self, id: int, update) -> dict[str, str]:
+    def update(self, id: int, update) -> Places:
         places = db_session.query(Places).get(id)
 
         places.name = update.name
@@ -42,8 +44,5 @@ class PlacesRepo:
             'message': 'Данные места раскопок успешно обновлены'
         }
 
-    def delete(self, id: int) -> dict[str, str]:
+    def delete(self, id: int) -> None:
         del self.pl_storage[id]
-        return {
-            'message': f'Место раскопок {id} удалено из базы данных'
-        }
