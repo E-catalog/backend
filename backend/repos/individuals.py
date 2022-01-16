@@ -17,7 +17,7 @@ class IndividualsRepo:
     def add(self, individual) -> dict[str, str]:
         new_individual = Individuals(
             name=individual.name,
-            place=individual.place,
+            place_uid=individual.place_uid,
             sex=individual.sex,
             age=individual.age,
             year_of_excavation=individual.year_of_excavation,
@@ -39,7 +39,7 @@ class IndividualsRepo:
             abort(HTTPStatus.BAD_REQUEST, 'Такого индивида нет в базе')
 
         individual.name = update.name
-        individual.place = update.place
+        individual.place_uid = update.place_uid
         individual.sex = update.sex
         individual.age = update.age
         individual.year_of_excavation = update.year_of_excavation

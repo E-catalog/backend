@@ -38,8 +38,9 @@ app.register_error_handler(InternalServerError, handle_internal_server_error)
 
 
 class Individual(BaseModel):
+    uid: int
     name: str
-    place: str
+    place_uid: int
     year_of_excavation: Optional[int]
     sex: Optional[str]
     age: Optional[str]
@@ -59,9 +60,9 @@ class Places(BaseModel):
 
 def converter(sql_individual):
     return {
-        'id': sql_individual.id,
+        'uid': sql_individual.id,
         'name': sql_individual.name,
-        'place': sql_individual.place,
+        'place_uid': sql_individual.place_uid,
         'sex': sql_individual.sex,
         'age': sql_individual.age,
         'individual_type': sql_individual.individual_type,
@@ -118,7 +119,7 @@ def create_individual():
     try:
         individual = Individual(**payload)
     except ValidationError as error:
-        logger.info('Ошибка в процессе pydantic-валидации: %s', error)
+        logger.info('Ошибка в процессе pydantic-валидации индивида: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
     return individuals_repo.add(individual), 201
@@ -133,7 +134,7 @@ def create_place():
     try:
         place = Places(**data)
     except ValidationError as error:
-        print(error)
+        logger.info('Ошибка в процессе pydantic-валидации места: %s', error)
     return places_repo.add(place), 201
 
 
@@ -161,7 +162,7 @@ def update_place(place_id):
     try:
         place = Places(**payload)
     except ValidationError as error:
-        print(error)
+        logger.info('Ошибка в процессе pydantic-валидации места: %s', error)
     return places_repo.update(place_id, place), 200
 
 
