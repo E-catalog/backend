@@ -1,13 +1,29 @@
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import relationship
 
 from backend.database.session import Base
+
+
+class Places(Base):
+    __tablename__ = 'places'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
+    head_of_excavations = Column(String)
+    type_of_burial_site = Column(String)
+    coordinates = Column(String)
+    comments = Column(Text)
+    individuals = relationship('individuals', lazy='joined', back_populates='places')
+
+    def __repr__(self):
+        return f'Место: индекс в базе {self.id}, {self.place}'
 
 
 class Individuals(Base):
     __tablename__ = 'individuals'
 
-    id = Column(Integer, primary_key=True)
-    place = Column(String, nullable=False)
+    uid = Column(Integer, primary_key=True)
+    place_uid = Column(Integer, ForeignKey(Places.id), nullable=False)
     name = Column(String, nullable=False)
     year_of_excavation = Column(Integer)
     individual_type = Column(String)
@@ -16,6 +32,7 @@ class Individuals(Base):
     preservation = Column(String)
     epoch = Column(String)
     comments = Column(Text)
+    places = relationship('places', lazy='joined', back_populates='individuals')
 
     def __repr__(self):
         return 'Индвид: индекс [{uid}], {place}, {name}, {sex}, {age}'.format(
@@ -25,17 +42,3 @@ class Individuals(Base):
             sex=self.sex,
             age=self.age,
         )
-
-
-class Places(Base):
-    __tablename__ = 'places'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    head_of_excavations = Column(String)
-    type_of_burial_site = Column(String)
-    coordinates = Column(String)
-    comments = Column(Text)
-
-    def __repr__(self):
-        return f'Место: индекс в базе {self.id}, {self.place}'
