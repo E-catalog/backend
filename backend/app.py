@@ -51,16 +51,20 @@ class Individual(BaseModel):
 
 
 class Places(BaseModel):
+    id: int
     name: str
     head_of_excavations: Optional[str]
     type_of_burial_site: Optional[str]
     coordinates: Optional[str]
     comments: Optional[str]
 
+    class Config:
+        orm_mode = True
+
 
 def converter(sql_individual):
     return {
-        'uid': sql_individual.id,
+        'uid': sql_individual.uid,
         'name': sql_individual.name,
         'place_uid': sql_individual.place_uid,
         'sex': sql_individual.sex,
@@ -135,7 +139,10 @@ def create_place():
         place = Places(**data)
     except ValidationError as error:
         logger.info('Ошибка в процессе pydantic-валидации места: %s', error)
-    return places_repo.add(place), 201
+
+    entity = places_repo.add(place)
+    new_place = Places.from_orm(entity)
+    return new_place.dict(), 201
 
 
 @app.route('/api/v1/individuals/<int:uid>', methods=['PUT'])
