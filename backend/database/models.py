@@ -7,7 +7,7 @@ from backend.database.session import Base
 class Places(Base):
     __tablename__ = 'places'
 
-    id = Column(Integer, primary_key=True)
+    uid = Column(Integer, primary_key=True)
     name = Column(String, unique=True, nullable=False)
     head_of_excavations = Column(String)
     type_of_burial_site = Column(String)
@@ -23,7 +23,7 @@ class Individuals(Base):
     __tablename__ = 'individuals'
 
     uid = Column(Integer, primary_key=True)
-    place_uid = Column(Integer, ForeignKey(Places.id), nullable=False)
+    place_uid = Column(Integer, ForeignKey(Places.uid), nullable=False)
     name = Column(String, nullable=False)
     year_of_excavation = Column(Integer)
     individual_type = Column(String)
