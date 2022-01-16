@@ -11,8 +11,8 @@ class IndividualsRepo:
     def get_all(self):
         return db_session.query(Individuals).all()
 
-    def get_by_id(self, id: int):
-        return db_session.query(Individuals).get(id)
+    def get_by_uid(self, uid: int):
+        return db_session.query(Individuals).get(uid)
 
     def add(self, individual) -> dict[str, str]:
         new_individual = Individuals(
@@ -32,8 +32,8 @@ class IndividualsRepo:
             'message': 'Новый индивид успешно создан',
         }
 
-    def update(self, id: int, update) -> dict[str, str]:
-        individual = db_session.query(Individuals).get(id)
+    def update(self, uid: int, update) -> dict[str, str]:
+        individual = db_session.query(Individuals).get(uid)
 
         if not individual:
             abort(HTTPStatus.BAD_REQUEST, 'Такого индивида нет в базе')
@@ -53,10 +53,10 @@ class IndividualsRepo:
             'message': 'Данные индивида успешно обновлены',
         }
 
-    def delete(self, id: int) -> dict[str, str]:
-        individual = db_session.query(Individuals).get(id)
+    def delete(self, uid: int) -> dict[str, str]:
+        individual = db_session.query(Individuals).get(uid)
         db_session.delete(individual)
         db_session.commit()
         return {
-            'message': f'Индивид {id} удален из базы данных',
+            'message': f'Индивид {uid} удален из базы данных',
         }

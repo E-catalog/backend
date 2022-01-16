@@ -13,7 +13,7 @@ class Places(Base):
     type_of_burial_site = Column(String)
     coordinates = Column(String)
     comments = Column(Text)
-    individuals = relationship('individuals', lazy='joined', back_populates='places')
+    individuals = relationship('Individuals', lazy='joined', back_populates='places')
 
     def __repr__(self):
         return f'Место: индекс в базе {self.id}, {self.place}'
@@ -32,7 +32,7 @@ class Individuals(Base):
     preservation = Column(String)
     epoch = Column(String)
     comments = Column(Text)
-    places = relationship('places', lazy='joined', back_populates='individuals')
+    places = relationship('Places', lazy='joined', back_populates='individuals')
 
     def __repr__(self):
         return 'Индвид: индекс [{uid}], {place}, {name}, {sex}, {age}'.format(

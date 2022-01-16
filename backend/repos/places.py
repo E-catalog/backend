@@ -1,4 +1,4 @@
-from backend.database.models.places import Places
+from backend.database.models import Places
 from backend.database.session import db_session
 
 

@@ -48,12 +48,13 @@ class Individual(BaseModel):
     epoch: Optional[str]
     comments: Optional[str]
 
+
 class Places(BaseModel):
     name: str
     head_of_excavations: Optional[str]
-    type_of_burial_site:   Optional[str]
-    coordinates:   Optional[str]
-    comments:   Optional[str]
+    type_of_burial_site: Optional[str]
+    coordinates: Optional[str]
+    comments: Optional[str]
 
 
 def converter(sql_individual):
@@ -70,6 +71,7 @@ def converter(sql_individual):
         'year_of_excavation': sql_individual.year_of_excavation,
     }
 
+
 def converterr(sql_places):
     return {
         'id': sql_places.id,
@@ -78,8 +80,7 @@ def converterr(sql_places):
         'type_of_burial_site': sql_places.type_of_burial_site,
         'comments': sql_places.comments,
         'coordinates': sql_places.coordinates,
-        }
-
+    }
 
 
 @app.route('/api/v1/individuals/', methods=['GET'])
@@ -96,9 +97,9 @@ def get_all_places():
     return jsonify(places), 200
 
 
-@app.route('/api/v1/individuals/<int:individual_id>', methods=['GET'])
-def get_individual(individual_id):
-    individual = converter(individuals_repo.get_by_id(individual_id))
+@app.route('/api/v1/individuals/<int:uid>', methods=['GET'])
+def get_individual(uid):
+    individual = converter(individuals_repo.get_by_uid(uid))
     return jsonify(individual), 200
 
 
@@ -136,8 +137,8 @@ def create_place():
     return places_repo.add(place), 201
 
 
-@app.route('/api/v1/individuals/<int:individual_id>', methods=['PUT'])
-def update_individual(individual_id):
+@app.route('/api/v1/individuals/<int:uid>', methods=['PUT'])
+def update_individual(uid):
     payload = request.json
     if not payload:
         abort(HTTPStatus.BAD_REQUEST, 'Тело запроса не может быть пустым')
@@ -148,7 +149,7 @@ def update_individual(individual_id):
         logger.info('Ошибка в процессе pydantic-валидации: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    return individuals_repo.update(individual_id, individual), 200
+    return individuals_repo.update(uid, individual), 200
 
 
 @app.route('/api/v1/places/<int:place_id>', methods=['PUT'])
@@ -164,9 +165,9 @@ def update_place(place_id):
     return places_repo.update(place_id, place), 200
 
 
-@app.route('/api/v1/individuals/<int:individual_id>', methods=['DELETE'])
-def del_individual(individual_id):
-    return individuals_repo.delete(individual_id), 200
+@app.route('/api/v1/individuals/<int:uid>', methods=['DELETE'])
+def del_individual(uid):
+    return individuals_repo.delete(uid), 200
 
 
 @app.route('/api/v1/places/<int:place_id>', methods=['DELETE'])
