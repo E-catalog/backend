@@ -49,6 +49,9 @@ class Individual(BaseModel):
     epoch: Optional[str]
     comments: Optional[str]
 
+    class Config:
+        orm_mode = True
+
 
 class Places(BaseModel):
     id: int
@@ -60,21 +63,6 @@ class Places(BaseModel):
 
     class Config:
         orm_mode = True
-
-
-def converter(sql_individual):
-    return {
-        'uid': sql_individual.uid,
-        'name': sql_individual.name,
-        'place_uid': sql_individual.place_uid,
-        'sex': sql_individual.sex,
-        'age': sql_individual.age,
-        'individual_type': sql_individual.individual_type,
-        'preservation': sql_individual.preservation,
-        'epoch': sql_individual.epoch,
-        'comments': sql_individual.comments,
-        'year_of_excavation': sql_individual.year_of_excavation,
-    }
 
 
 def converterr(sql_places):
@@ -91,26 +79,26 @@ def converterr(sql_places):
 @app.route('/api/v1/individuals/', methods=['GET'])
 def get_all_individuals():
     response = individuals_repo.get_all()
-    individuals = [converter(ind) for ind in response]
+    individuals = [Individual.from_orm(ind).dict() for ind in response]
     return jsonify(individuals), 200
 
 
 @app.route('/api/v1/places/', methods=['GET'])
 def get_all_places():
     response = places_repo.get_all()
-    places = [converter(ind) for ind in response]
+    places = [converterr(ind) for ind in response]
     return jsonify(places), 200
 
 
 @app.route('/api/v1/individuals/<int:uid>', methods=['GET'])
 def get_individual(uid):
-    individual = converter(individuals_repo.get_by_uid(uid))
-    return jsonify(individual), 200
+    individual = individuals_repo.get_by_uid(uid)
+    return Individual.from_orm(individual).dict, 200
 
 
 @app.route('/api/v1/places/<int:place_id>', methods=['GET'])
 def get_place(place_id):
-    place = converter(places_repo.get_by_id(place_id))
+    place = converterr(places_repo.get_by_id(place_id))
     return jsonify(place), 200
 
 
@@ -126,7 +114,9 @@ def create_individual():
         logger.info('Ошибка в процессе pydantic-валидации индивида: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    return individuals_repo.add(individual), 201
+    entity = individuals_repo.add(individual)
+    new_individual = Individual.from_orm(entity)
+    return new_individual.dict(), 201
 
 
 @app.route('/api/v1/places/', methods=['POST'])
@@ -157,7 +147,9 @@ def update_individual(uid):
         logger.info('Ошибка в процессе pydantic-валидации: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    return individuals_repo.update(uid, individual), 200
+    update = individuals_repo.update(uid, individual)
+    updated_individual = Individual.from_orm(update)
+    return updated_individual.dict(), 200
 
 
 @app.route('/api/v1/places/<int:place_id>', methods=['PUT'])
@@ -170,14 +162,19 @@ def update_place(place_id):
         place = Places(**payload)
     except ValidationError as error:
         logger.info('Ошибка в процессе pydantic-валидации места: %s', error)
-    return places_repo.update(place_id, place), 200
+
+    update = places_repo.update(place_id, place)
+    updated_place = Individual.from_orm(update)
+    return updated_place.dict(), 200
 
 
 @app.route('/api/v1/individuals/<int:uid>', methods=['DELETE'])
 def del_individual(uid):
-    return individuals_repo.delete(uid), 200
+    individuals_repo.delete(uid)
+    return {}, 204
 
 
 @app.route('/api/v1/places/<int:place_id>', methods=['DELETE'])
 def del_place(place_id):
-    return places_repo.delete(place_id)
+    places_repo.delete(place_id)
+    return {}, 204

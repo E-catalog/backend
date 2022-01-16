@@ -2,19 +2,20 @@ from http import HTTPStatus
 
 from flask import abort
 
+from backend.app import Individual
 from backend.database.models import Individuals
 from backend.database.session import db_session
 
 
 class IndividualsRepo:
 
-    def get_all(self):
+    def get_all(self) -> list[Individuals]:
         return db_session.query(Individuals).all()
 
-    def get_by_uid(self, uid: int):
+    def get_by_uid(self, uid: int) -> Individuals:
         return db_session.query(Individuals).get(uid)
 
-    def add(self, individual) -> dict[str, str]:
+    def add(self, individual: Individual) -> Individuals:
         new_individual = Individuals(
             name=individual.name,
             place_uid=individual.place_uid,
@@ -28,11 +29,9 @@ class IndividualsRepo:
         )
         db_session.add(new_individual)
         db_session.commit()
-        return {
-            'message': 'Новый индивид успешно создан',
-        }
+        return new_individual
 
-    def update(self, uid: int, update) -> dict[str, str]:
+    def update(self, uid: int, update: Individual) -> Individuals:
         individual = db_session.query(Individuals).get(uid)
 
         if not individual:
@@ -49,14 +48,9 @@ class IndividualsRepo:
         individual.comments = update.comments
 
         db_session.commit()
-        return {
-            'message': 'Данные индивида успешно обновлены',
-        }
+        return individual
 
-    def delete(self, uid: int) -> dict[str, str]:
+    def delete(self, uid: int) -> None:
         individual = db_session.query(Individuals).get(uid)
         db_session.delete(individual)
         db_session.commit()
-        return {
-            'message': f'Индивид {uid} удален из базы данных',
-        }
