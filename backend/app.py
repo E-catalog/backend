@@ -57,9 +57,9 @@ def get_individual(uid):
     return Individual.from_orm(individual).dict(), 200
 
 
-@app.route('/api/v1/places/<int:place_id>', methods=['GET'])
-def get_place(place_id):
-    place = places_repo.get_by_id(place_id)
+@app.route('/api/v1/places/<int:uid>', methods=['GET'])
+def get_place(uid):
+    place = places_repo.get_by_id(uid)
     return Place.from_orm(place).dict(), 200
 
 
@@ -114,8 +114,8 @@ def update_individual(uid):
     return updated_individual.dict(), 200
 
 
-@app.route('/api/v1/places/<int:place_id>', methods=['PUT'])
-def update_place(place_id):
+@app.route('/api/v1/places/<int:uid>', methods=['PUT'])
+def update_place(uid):
     payload = request.json
     if not payload:
         abort(HTTPStatus.BAD_REQUEST, 'Тело запроса не может быть пустым')
@@ -126,7 +126,7 @@ def update_place(place_id):
         logger.info('Ошибка в процессе pydantic-валидации места: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    update = places_repo.update(place_id, place)
+    update = places_repo.update(uid, place)
     updated_place = Place.from_orm(update)
     return updated_place.dict(), 200
 
@@ -137,7 +137,7 @@ def del_individual(uid):
     return {}, 204
 
 
-@app.route('/api/v1/places/<int:place_id>', methods=['DELETE'])
-def del_place(place_id):
-    places_repo.delete(place_id)
+@app.route('/api/v1/places/<int:uid', methods=['DELETE'])
+def del_place(uid):
+    places_repo.delete(uid)
     return {}, 204
