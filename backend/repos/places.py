@@ -1,5 +1,6 @@
-from backend.database.models.places import Places
+from backend.database.models import Places
 from backend.database.session import db_session
+from backend.pydantic_models import Place
 
 
 class PlacesRepo:
@@ -10,22 +11,23 @@ class PlacesRepo:
     def get_by_id(self, uid: int):
         return db_session.query(Places).get(uid)
 
-    def add(self, places) -> Places:
-        new_places = Places(
-            name=places.name,
-            head_of_excavations=places.head_of_excavations,
-            type_of_burial_site=places.type_of_burial_site,
-            coordinates=places.coordinates,
-            comments=places.comments,
+    def add(self, place: Place) -> Places:
+        new_place = Places(
+            name=place.name,
+            head_of_excavations=place.head_of_excavations,
+            type_of_burial_site=place.type_of_burial_site,
+            coordinates=place.coordinates,
+            comments=place.comments,
         )
-        db_session.add(new_places)
+        db_session.add(new_place)
         db_session.commit()
-        return new_places
+        return new_place
 
-    def update(self, id: int, update) -> Places:
-        place = db_session.query(Places).get(id)
+    def update(self, uid: int, update: Place) -> Places:
+        place = db_session.query(Places).get(uid)
 
         place.name = update.name
+        place.uid = update.uid
         place.head_of_excavations = update.head_of_excavations
         place.type_of_burial_site = update.type_of_burial_site
         place.coordinates = update.coordinates
@@ -34,7 +36,7 @@ class PlacesRepo:
         db_session.commit()
         return place
 
-    def delete(self, id: int) -> None:
-        individual = db_session.query(Places).get(id)
+    def delete(self, uid: int) -> None:
+        individual = db_session.query(Places).get(uid)
         db_session.delete(individual)
         db_session.commit()
