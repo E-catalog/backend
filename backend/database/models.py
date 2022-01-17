@@ -32,7 +32,7 @@ class Individuals(Base):
     preservation = Column(String)
     epoch = Column(String)
     comments = Column(Text)
-    places = relationship('Places', lazy='joined', back_populates='individuals')
+    place = relationship('Places', lazy='joined', back_populates='individuals')
 
     def __repr__(self):
         return 'Индвид: индекс [{uid}], {place}, {name}, {sex}, {age}'.format(

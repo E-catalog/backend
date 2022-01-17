@@ -1,6 +1,6 @@
 from backend.database.models import Places
 from backend.database.session import db_session
-from backend.pydantic_models import Place
+from backend.schemas import Place
 
 
 class PlacesRepo:
