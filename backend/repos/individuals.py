@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from flask import abort
 
-from backend.app import Individual
+from backend.schemas import Individual
 from backend.database.models import Individuals
 from backend.database.session import db_session
 

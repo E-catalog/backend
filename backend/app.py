@@ -5,7 +5,7 @@ from flask import Flask, abort, jsonify, request
 from pydantic import ValidationError
 from werkzeug.exceptions import BadRequest, InternalServerError, MethodNotAllowed, NotFound
 
-from backend.pydantic_models import Individual, Place
+from backend.schemas import Individual, Place
 from backend.repos.individuals import IndividualsRepo
 from backend.repos.places import PlacesRepo
 
