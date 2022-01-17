@@ -26,11 +26,10 @@ class PlacesRepo:
         place = db_session.query(Places).get(id)
 
         place.name = update.name
-        place.id = update.id
         place.head_of_excavations = update.head_of_excavations
         place.type_of_burial_site = update.type_of_burial_site
         place.coordinates = update.coordinates
-        place.comments = update.commments
+        place.comments = update.comments
 
         db_session.commit()
         return place

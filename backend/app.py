@@ -168,7 +168,10 @@ def update_place(place_id):
         place = Places(**payload)
     except ValidationError as error:
         print(error)
-    return places_repo.update(place_id, place), 200
+    entity = places_repo.update(place_id, place)
+    upd_place = Places.from_orm(entity)
+    return upd_place.dict(), 200
+
 
 
 @app.route('/api/v1/individuals/<int:individual_id>', methods=['DELETE'])
