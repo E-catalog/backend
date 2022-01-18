@@ -46,8 +46,14 @@ app.register_error_handler(InternalServerError, handle_internal_server_error)
 
 @app.route('/api/v1/individuals/', methods=['GET'])
 def get_all_individuals():
-    all_individuals = individuals_repo.get_all()
-    return jsonify(all_individuals), 200
+    places = {place.uid: Place.from_orm(place) for place in places_repo.get_all()}
+    entities = individuals_repo.get_all()
+    individuals = [Individual.from_orm(entity) for entity in entities]
+
+    for individual in individuals:
+        individual.links['place'] = places.get(individual.place_uid)
+
+    return to_json(individuals), 200
 
 
 @app.route('/api/v1/places/', methods=['GET'])
