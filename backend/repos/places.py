@@ -2,7 +2,6 @@ from typing import Optional
 
 from backend.database.models import Places
 from backend.database.session import db_session
-from backend.schemas import Place
 
 
 class PlacesRepo:
@@ -32,15 +31,23 @@ class PlacesRepo:
         db_session.commit()
         return new_place
 
-    def update(self, uid: int, update: Place) -> Places:
+    def update(
+        self,
+        uid: int,
+        name: str,
+        head_of_excavations: Optional[str],
+        type_of_burial_site: Optional[str],
+        coordinates: Optional[str],
+        comments: Optional[str],
+    ) -> Places:
         place = db_session.query(Places).get(uid)
 
-        place.name = update.name
-        place.uid = update.uid
-        place.head_of_excavations = update.head_of_excavations
-        place.type_of_burial_site = update.type_of_burial_site
-        place.coordinates = update.coordinates
-        place.comments = update.comments
+        place.name = name
+        place.uid = uid
+        place.head_of_excavations = head_of_excavations
+        place.type_of_burial_site = type_of_burial_site
+        place.coordinates = coordinates
+        place.comments = comments
 
         db_session.commit()
         return place

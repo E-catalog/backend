@@ -131,7 +131,14 @@ def update_place(uid):
         logger.info('Ошибка в процессе pydantic-валидации места: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    entity = places_repo.update(uid, place)
+    entity = places_repo.update(
+        uid=uid,
+        name=place.name,
+        head_of_excavations=place.head_of_excavations,
+        type_of_burial_site=place.type_of_burial_site,
+        coordinates=place.coordinates,
+        comments=place.comments,
+    )
     updated_place = Place.from_orm(entity)
     return updated_place.dict(), 200
 
