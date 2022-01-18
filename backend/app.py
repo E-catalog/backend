@@ -52,15 +52,16 @@ def get_all_individuals():
 
 @app.route('/api/v1/places/', methods=['GET'])
 def get_all_places():
-    response = places_repo.get_all()
-    places = [Place.from_orm(place).dict() for place in response]
-    return jsonify(places), 200
+    entities = places_repo.get_all()
+    places = [Place.from_orm(place) for place in entities]
+    return to_json(places), 200
 
 
 @app.route('/api/v1/individuals/<int:uid>', methods=['GET'])
 def get_individual(uid):
-    individual = individuals_repo.get_by_uid(uid)
-    return jsonify(individual), 200
+    entity = individuals_repo.get_by_uid(uid)
+    individual = Individual.from_orm(entity)
+    return individual.dict(), 200
 
 
 @app.route('/api/v1/places/<int:uid>', methods=['GET'])
@@ -81,9 +82,19 @@ def create_individual():
         logger.info('Ошибка в процессе pydantic-валидации индивида: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    converted_data = individual.dict()
-    add = individuals_repo.add(converted_data)
-    return add, 201
+    entity = individuals_repo.add(
+        name=individual.name,
+        place_id=individual.place_uid,
+        year_of_excavation=individual.year_of_excavation,
+        sex=individual.sex,
+        age=individual.age,
+        individual_type=individual.individual_type,
+        preservation=individual.preservation,
+        epoch=individual.epoch,
+        comments=individual.comments,
+    )
+    individual = Individual.from_orm(entity)
+    return individual.dict(), 201
 
 
 @app.route('/api/v1/places/', methods=['POST'])
@@ -121,8 +132,18 @@ def update_individual(uid):
         logger.info('Ошибка в процессе pydantic-валидации: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    converted_data = individual.dict()
-    update = individuals_repo.update(uid, converted_data)
+    update = individuals_repo.update(
+        uid=uid,
+        name=individual.name,
+        place_id=individual.place_uid,
+        year_of_excavation=individual.year_of_excavation,
+        sex=individual.sex,
+        age=individual.age,
+        individual_type=individual.individual_type,
+        preservation=individual.preservation,
+        epoch=individual.epoch,
+        comments=individual.comments,
+    )
     return update, 200
 
 
