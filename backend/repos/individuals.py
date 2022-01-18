@@ -12,7 +12,7 @@ class IndividualsRepo:
     def get_all(self) -> list[Individuals]:
         return db_session.query(Individuals).all()
 
-    def get_by_uid(self, uid: int) -> Individuals:
+    def get_by_uid(self, uid: int) -> Optional[Individuals]:
         return db_session.query(Individuals).get(uid)
 
     def add(

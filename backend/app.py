@@ -66,8 +66,13 @@ def get_all_places():
 @app.route('/api/v1/individuals/<int:uid>', methods=['GET'])
 def get_individual(uid):
     entity = individuals_repo.get_by_uid(uid)
+    if not entity:
+        abort(HTTPStatus.NOT_FOUND, 'Individual not found')
+
     individual = Individual.from_orm(entity)
-    return individual.dict(), 200
+    place_entity = places_repo.get_by_id(individual.place_uid)
+    individual.links['place'] = Place.from_orm(place_entity)
+    return individual.dict(), HTTPStatus.OK
 
 
 @app.route('/api/v1/places/<int:uid>', methods=['GET'])
