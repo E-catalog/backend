@@ -78,6 +78,9 @@ def get_individual(uid):
 @app.route('/api/v1/places/<int:uid>', methods=['GET'])
 def get_place(uid):
     place = places_repo.get_by_id(uid)
+    if not place:
+        abort(HTTPStatus.NOT_FOUND, 'Place not found')
+
     return Place.from_orm(place).dict(), 200
 
 
