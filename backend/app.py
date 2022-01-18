@@ -1,8 +1,9 @@
 import logging
 from http import HTTPStatus
+from typing import TypeVar
 
 from flask import Flask, abort, jsonify, request
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 from werkzeug.exceptions import BadRequest, InternalServerError, MethodNotAllowed, NotFound
 
 from backend.repos.individuals import IndividualsRepo
@@ -13,6 +14,12 @@ app = Flask(__name__)
 individuals_repo = IndividualsRepo()
 places_repo = PlacesRepo()
 logger = logging.getLogger(__name__)
+
+TC = TypeVar('TC', bound=BaseModel)
+
+
+def to_json(items: list[TC]):
+    return jsonify([item.dict() for item in items])
 
 
 def handle_bad_request(error: BadRequest):
