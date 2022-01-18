@@ -53,6 +53,9 @@ class PlacesRepo:
         return place
 
     def delete(self, uid: int) -> None:
-        individual = db_session.query(Places).get(uid)
-        db_session.delete(individual)
+        place = db_session.query(Places).get(uid)
+        if not place:
+            return
+
+        db_session.delete(place)
         db_session.commit()
