@@ -1,10 +1,11 @@
-from typing import Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
 
 class Model(BaseModel):
     uid: int
+    links: dict[str, Any] = {}
 
     class Config:
         orm_mode = True
