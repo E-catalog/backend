@@ -39,9 +39,8 @@ app.register_error_handler(InternalServerError, handle_internal_server_error)
 
 @app.route('/api/v1/individuals/', methods=['GET'])
 def get_all_individuals():
-    response = individuals_repo.get_all()
-    individuals = [Individual.from_orm(ind).dict() for ind in response]
-    return jsonify(individuals), 200
+    all_individuals = individuals_repo.get_all()
+    return jsonify(all_individuals), 200
 
 
 @app.route('/api/v1/places/', methods=['GET'])
@@ -54,7 +53,7 @@ def get_all_places():
 @app.route('/api/v1/individuals/<int:uid>', methods=['GET'])
 def get_individual(uid):
     individual = individuals_repo.get_by_uid(uid)
-    return Individual.from_orm(individual).dict(), 200
+    return jsonify(individual), 200
 
 
 @app.route('/api/v1/places/<int:uid>', methods=['GET'])
@@ -75,9 +74,9 @@ def create_individual():
         logger.info('Ошибка в процессе pydantic-валидации индивида: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    entity = individuals_repo.add(individual)
-    new_individual = Individual.from_orm(entity)
-    return new_individual.dict(), 201
+    converted_data = individual.dict()
+    add = individuals_repo.add(converted_data)
+    return add, 201
 
 
 @app.route('/api/v1/places/', methods=['POST'])
@@ -109,9 +108,9 @@ def update_individual(uid):
         logger.info('Ошибка в процессе pydantic-валидации: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    update = individuals_repo.update(uid, individual)
-    updated_individual = Individual.from_orm(update)
-    return updated_individual.dict(), 200
+    converted_data = individual.dict()
+    update = individuals_repo.update(uid, converted_data)
+    return update, 200
 
 
 @app.route('/api/v1/places/<int:uid>', methods=['PUT'])
@@ -137,7 +136,7 @@ def del_individual(uid):
     return {}, 204
 
 
-@app.route('/api/v1/places/<int:uid', methods=['DELETE'])
+@app.route('/api/v1/places/<int:uid>', methods=['DELETE'])
 def del_place(uid):
     places_repo.delete(uid)
     return {}, 204

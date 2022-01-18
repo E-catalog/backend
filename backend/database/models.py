@@ -13,7 +13,7 @@ class Places(Base):
     type_of_burial_site = Column(String)
     coordinates = Column(String)
     comments = Column(Text)
-    individuals = relationship('Individuals', lazy='joined', back_populates='places')
+    individuals = relationship('Individuals', lazy='joined', back_populates='place')
 
     def __repr__(self):
         return f'Место: индекс в базе {self.id}, {self.place}'
@@ -42,3 +42,6 @@ class Individuals(Base):
             sex=self.sex,
             age=self.age,
         )
+
+    def to_dict(self):
+        return {col.name: getattr(self, col.name, '') for col in self.__table__.columns}
