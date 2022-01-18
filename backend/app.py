@@ -1,8 +1,9 @@
 import logging
 from http import HTTPStatus
+from typing import TypeVar
 
 from flask import Flask, abort, jsonify, request
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 from werkzeug.exceptions import BadRequest, InternalServerError, MethodNotAllowed, NotFound
 
 from backend.repos.individuals import IndividualsRepo
@@ -13,6 +14,12 @@ app = Flask(__name__)
 individuals_repo = IndividualsRepo()
 places_repo = PlacesRepo()
 logger = logging.getLogger(__name__)
+
+TC = TypeVar('TC', bound=BaseModel)
+
+
+def to_json(items: list[TC]):
+    return jsonify([item.dict() for item in items])
 
 
 def handle_bad_request(error: BadRequest):
@@ -39,27 +46,41 @@ app.register_error_handler(InternalServerError, handle_internal_server_error)
 
 @app.route('/api/v1/individuals/', methods=['GET'])
 def get_all_individuals():
-    response = individuals_repo.get_all()
-    individuals = [Individual.from_orm(ind).dict() for ind in response]
-    return jsonify(individuals), 200
+    places = {place.uid: Place.from_orm(place) for place in places_repo.get_all()}
+    entities = individuals_repo.get_all()
+    individuals = [Individual.from_orm(entity) for entity in entities]
+
+    for individual in individuals:
+        individual.links['place'] = places.get(individual.place_uid)
+
+    return to_json(individuals), 200
 
 
 @app.route('/api/v1/places/', methods=['GET'])
 def get_all_places():
-    response = places_repo.get_all()
-    places = [Place.from_orm(place).dict() for place in response]
-    return jsonify(places), 200
+    entities = places_repo.get_all()
+    places = [Place.from_orm(place) for place in entities]
+    return to_json(places), 200
 
 
 @app.route('/api/v1/individuals/<int:uid>', methods=['GET'])
 def get_individual(uid):
-    individual = individuals_repo.get_by_uid(uid)
-    return Individual.from_orm(individual).dict(), 200
+    entity = individuals_repo.get_by_uid(uid)
+    if not entity:
+        abort(HTTPStatus.NOT_FOUND, 'Individual not found')
+
+    individual = Individual.from_orm(entity)
+    place_entity = places_repo.get_by_id(individual.place_uid)
+    individual.links['place'] = Place.from_orm(place_entity)
+    return individual.dict(), HTTPStatus.OK
 
 
 @app.route('/api/v1/places/<int:uid>', methods=['GET'])
 def get_place(uid):
     place = places_repo.get_by_id(uid)
+    if not place:
+        abort(HTTPStatus.NOT_FOUND, 'Place not found')
+
     return Place.from_orm(place).dict(), 200
 
 
@@ -75,9 +96,19 @@ def create_individual():
         logger.info('Ошибка в процессе pydantic-валидации индивида: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    entity = individuals_repo.add(individual)
-    new_individual = Individual.from_orm(entity)
-    return new_individual.dict(), 201
+    entity = individuals_repo.add(
+        name=individual.name,
+        place_id=individual.place_uid,
+        year_of_excavation=individual.year_of_excavation,
+        sex=individual.sex,
+        age=individual.age,
+        individual_type=individual.individual_type,
+        preservation=individual.preservation,
+        epoch=individual.epoch,
+        comments=individual.comments,
+    )
+    individual = Individual.from_orm(entity)
+    return individual.dict(), 201
 
 
 @app.route('/api/v1/places/', methods=['POST'])
@@ -92,7 +123,13 @@ def create_place():
         logger.info('Ошибка в процессе pydantic-валидации места: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    entity = places_repo.add(place)
+    entity = places_repo.add(
+        name=place.name,
+        head_of_excavations=place.head_of_excavations,
+        type_of_burial_site=place.type_of_burial_site,
+        coordinates=place.coordinates,
+        comments=place.comments,
+    )
     new_place = Place.from_orm(entity)
     return new_place.dict(), 201
 
@@ -109,9 +146,19 @@ def update_individual(uid):
         logger.info('Ошибка в процессе pydantic-валидации: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    update = individuals_repo.update(uid, individual)
-    updated_individual = Individual.from_orm(update)
-    return updated_individual.dict(), 200
+    entity = individuals_repo.update(
+        uid=uid,
+        name=individual.name,
+        place_id=individual.place_uid,
+        year_of_excavation=individual.year_of_excavation,
+        sex=individual.sex,
+        age=individual.age,
+        individual_type=individual.individual_type,
+        preservation=individual.preservation,
+        epoch=individual.epoch,
+        comments=individual.comments,
+    )
+    return Individual.from_orm(entity).dict(), 200
 
 
 @app.route('/api/v1/places/<int:uid>', methods=['PUT'])
@@ -126,7 +173,14 @@ def update_place(uid):
         logger.info('Ошибка в процессе pydantic-валидации места: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    entity = places_repo.update(uid, place)
+    entity = places_repo.update(
+        uid=uid,
+        name=place.name,
+        head_of_excavations=place.head_of_excavations,
+        type_of_burial_site=place.type_of_burial_site,
+        coordinates=place.coordinates,
+        comments=place.comments,
+    )
     updated_place = Place.from_orm(entity)
     return updated_place.dict(), 200
 
@@ -137,7 +191,7 @@ def del_individual(uid):
     return {}, 204
 
 
-@app.route('/api/v1/places/<int:uid', methods=['DELETE'])
+@app.route('/api/v1/places/<int:uid>', methods=['DELETE'])
 def del_place(uid):
     places_repo.delete(uid)
     return {}, 204

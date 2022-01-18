@@ -1,5 +1,9 @@
+import logging
+
 from backend.app import app
 from backend.config import config
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 def main():
