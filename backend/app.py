@@ -146,7 +146,7 @@ def update_individual(uid):
         logger.info('Ошибка в процессе pydantic-валидации: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    update = individuals_repo.update(
+    entity = individuals_repo.update(
         uid=uid,
         name=individual.name,
         place_id=individual.place_uid,
@@ -158,7 +158,7 @@ def update_individual(uid):
         epoch=individual.epoch,
         comments=individual.comments,
     )
-    return update, 200
+    return Individual.from_orm(entity).dict(), 200
 
 
 @app.route('/api/v1/places/<int:uid>', methods=['PUT'])
