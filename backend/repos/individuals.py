@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, Optional
 
 from flask import abort
 
@@ -9,48 +9,69 @@ from backend.database.session import db_session
 
 class IndividualsRepo:
 
-    def get_all(self) -> list[dict[str, Any]]:
-        all_individuals = db_session.query(Individuals).all()
-        return [ind.to_dict() for ind in all_individuals]
+    def get_all(self) -> list[Individuals]:
+        return db_session.query(Individuals).all()
 
-    def get_by_uid(self, uid: int) -> dict[str, Any]:
-        individual = db_session.query(Individuals).get(uid)
-        return individual.to_dict()
+    def get_by_uid(self, uid: int) -> Individuals:
+        return db_session.query(Individuals).get(uid)
 
-    def add(self, individual: dict[str, Any]) -> dict[str, Any]:
+    def add(
+        self,
+        name: str,
+        place_id: int,
+        year_of_excavation: Optional[int],
+        sex: Optional[str],
+        age: Optional[str],
+        individual_type: Optional[str],
+        preservation: Optional[str],
+        epoch: Optional[str],
+        comments: Optional[str],
+    ) -> Individuals:
         new_individual = Individuals(
-            name=individual['name'],
-            place_uid=individual['place_uid'],
-            sex=individual['sex'],
-            age=individual['age'],
-            year_of_excavation=individual['year_of_excavation'],
-            individual_type=individual['individual_type'],
-            preservation=individual['preservation'],
-            epoch=individual['epoch'],
-            comments=individual['comments'],
+            name=name,
+            place_uid=place_id,
+            sex=sex,
+            age=age,
+            year_of_excavation=year_of_excavation,
+            individual_type=individual_type,
+            preservation=preservation,
+            epoch=epoch,
+            comments=comments,
         )
         db_session.add(new_individual)
         db_session.commit()
-        return new_individual.to_dict()
+        return new_individual
 
-    def update(self, uid: int, update: dict[str, Any]) -> dict[str, Any]:
+    def update(
+        self,
+        uid: int,
+        name: str,
+        place_id: int,
+        year_of_excavation: Optional[int],
+        sex: Optional[str],
+        age: Optional[str],
+        individual_type: Optional[str],
+        preservation: Optional[str],
+        epoch: Optional[str],
+        comments: Optional[str],
+    ) -> Individuals:
         individual = db_session.query(Individuals).get(uid)
 
         if not individual:
             abort(HTTPStatus.BAD_REQUEST, 'Такого индивида нет в базе')
 
-        individual.name = update['name']
-        individual.place_uid = update['place_uid']
-        individual.sex = update['sex']
-        individual.age = update['age']
-        individual.year_of_excavation = update['year_of_excavation']
-        individual.individual_type = update['individual_type']
-        individual.preservation = update['preservation']
-        individual.epoch = update['epoch']
-        individual.comments = update['comments']
+        individual.name = name
+        individual.place_uid = place_id
+        individual.sex = sex
+        individual.age = age
+        individual.year_of_excavation = year_of_excavation
+        individual.individual_type = individual_type
+        individual.preservation = preservation
+        individual.epoch = epoch
+        individual.comments = comments
 
         db_session.commit()
-        return individual.to_dict()
+        return individual
 
     def delete(self, uid: int) -> None:
         individual = db_session.query(Individuals).get(uid)
