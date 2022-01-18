@@ -91,7 +91,13 @@ def create_place():
         logger.info('Ошибка в процессе pydantic-валидации места: %s', error)
         abort(HTTPStatus.BAD_REQUEST, 'Неверный тип данных в запросе')
 
-    entity = places_repo.add(place)
+    entity = places_repo.add(
+        name=place.name,
+        head_of_excavations=place.head_of_excavations,
+        type_of_burial_site=place.type_of_burial_site,
+        coordinates=place.coordinates,
+        comments=place.comments,
+    )
     new_place = Place.from_orm(entity)
     return new_place.dict(), 201
 
