@@ -3,7 +3,7 @@ import logging
 from flask import Flask
 from werkzeug.exceptions import BadRequest, InternalServerError, MethodNotAllowed, NotFound
 
-from backend.views import individs, places
+from backend.views import individuals, places
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ def handle_internal_server_error(error: InternalServerError):
 def create_app():
     app = Flask(__name__)
 
-    app.register_blueprint(individs.routes, url_prefix='/api/v1/individuals/')
+    app.register_blueprint(individuals.routes, url_prefix='/api/v1/individuals/')
     app.register_blueprint(places.routes, url_prefix='/api/v1/places/')
 
     app.register_error_handler(BadRequest, handle_bad_request)
