@@ -5,7 +5,6 @@ from typing import TypeVar
 from flask import Blueprint, abort, jsonify, request
 from pydantic import BaseModel, ValidationError
 
-from backend.app import app
 from backend.repos.individuals import IndividualsRepo
 from backend.repos.places import PlacesRepo
 from backend.schemas import Individual, Place
@@ -21,7 +20,7 @@ def to_json(items: list[TC]):
     return jsonify([item.dict() for item in items])
 
 
-@app.route('/api/v1/individuals/', methods=['GET'])
+@routes.get('/')
 def get_all_individuals():
     places = {place.uid: Place.from_orm(place) for place in places_repo.get_all()}
     entities = individuals_repo.get_all()
@@ -33,7 +32,7 @@ def get_all_individuals():
     return to_json(individuals), HTTPStatus.OK
 
 
-@app.route('/api/v1/individuals/<int:uid>', methods=['GET'])
+@routes.get('/<int:uid>')
 def get_individual(uid):
     entity = individuals_repo.get_by_uid(uid)
     if not entity:
@@ -45,7 +44,7 @@ def get_individual(uid):
     return individual.dict(), HTTPStatus.OK
 
 
-@app.route('/api/v1/individuals/', methods=['POST'])
+@routes.post('/')
 def create_individual():
     payload = request.json
     if not payload:
@@ -72,7 +71,7 @@ def create_individual():
     return individual.dict(), HTTPStatus.CREATED
 
 
-@app.route('/api/v1/individuals/<int:uid>', methods=['PUT'])
+@routes.put('/<int:uid>')
 def update_individual(uid):
     payload = request.json
     if not payload:
@@ -99,7 +98,7 @@ def update_individual(uid):
     return Individual.from_orm(entity).dict(), HTTPStatus.OK
 
 
-@app.route('/api/v1/individuals/<int:uid>', methods=['DELETE'])
+@routes.delete('/<int:uid>')
 def del_individual(uid):
     individuals_repo.delete(uid)
     return {}, HTTPStatus.NO_CONTENT
