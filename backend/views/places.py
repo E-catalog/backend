@@ -5,7 +5,6 @@ from typing import TypeVar
 from flask import Blueprint, abort, jsonify, request
 from pydantic import BaseModel, ValidationError
 
-from backend.app import app
 from backend.repos.places import PlacesRepo
 from backend.schemas import Place
 
@@ -19,14 +18,14 @@ def to_json(items: list[TC]):
     return jsonify([item.dict() for item in items])
 
 
-@app.route('/api/v1/places/', methods=['GET'])
+@routes.get('/')
 def get_all_places():
     entities = places_repo.get_all()
     places = [Place.from_orm(place) for place in entities]
     return to_json(places), HTTPStatus.OK
 
 
-@app.route('/api/v1/places/<int:uid>', methods=['GET'])
+@routes.get('/<int:uid>')
 def get_place(uid):
     place = places_repo.get_by_id(uid)
     if not place:
@@ -35,7 +34,7 @@ def get_place(uid):
     return Place.from_orm(place).dict(), HTTPStatus.OK
 
 
-@app.route('/api/v1/places/', methods=['POST'])
+@routes.post('/')
 def create_place():
     data = request.json
     if not data:
@@ -58,7 +57,7 @@ def create_place():
     return new_place.dict(), HTTPStatus.CREATED
 
 
-@app.route('/api/v1/places/<int:uid>', methods=['PUT'])
+@routes.put('/<int:uid>')
 def update_place(uid):
     payload = request.json
     if not payload:
@@ -82,7 +81,7 @@ def update_place(uid):
     return updated_place.dict(), HTTPStatus.OK
 
 
-@app.route('/api/v1/places/<int:uid>', methods=['DELETE'])
+@routes.delete('/<int:uid>')
 def del_place(uid):
     places_repo.delete(uid)
     return {}, HTTPStatus.NO_CONTENT
