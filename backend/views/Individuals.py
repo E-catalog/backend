@@ -8,9 +8,9 @@ from pydantic import BaseModel, ValidationError
 from backend.app import app
 from backend.repos.individuals import IndividualsRepo
 from backend.repos.places import PlacesRepo
-from backend.schemas import Individual
+from backend.schemas import Individual, Place
 
-
+routes = Blueprint('individuals', __name__)
 individuals_repo = IndividualsRepo()
 places_repo = PlacesRepo()
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ def get_all_individuals():
     for individual in individuals:
         individual.links['place'] = places.get(individual.place_uid)
 
-    return to_json(individuals), 200
+    return to_json(individuals), HTTPStatus.OK
 
 
 @app.route('/api/v1/individuals/<int:uid>', methods=['GET'])
@@ -69,7 +69,7 @@ def create_individual():
         comments=individual.comments,
     )
     individual = Individual.from_orm(entity)
-    return individual.dict(), 201
+    return individual.dict(), HTTPStatus.CREATED
 
 
 @app.route('/api/v1/individuals/<int:uid>', methods=['PUT'])
@@ -96,10 +96,10 @@ def update_individual(uid):
         epoch=individual.epoch,
         comments=individual.comments,
     )
-    return Individual.from_orm(entity).dict(), 200
+    return Individual.from_orm(entity).dict(), HTTPStatus.OK
 
 
 @app.route('/api/v1/individuals/<int:uid>', methods=['DELETE'])
 def del_individual(uid):
     individuals_repo.delete(uid)
-    return {}, 204
+    return {}, HTTPStatus.NO_CONTENT
