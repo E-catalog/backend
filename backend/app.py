@@ -3,6 +3,7 @@ import logging
 from flask import Flask
 from werkzeug.exceptions import BadRequest, InternalServerError, MethodNotAllowed, NotFound
 
+from backend.database import session
 from backend.views import individuals, places
 
 logger = logging.getLogger(__name__)
@@ -24,6 +25,10 @@ def handle_internal_server_error(error: InternalServerError):
     return {'error': 'Internal server error'}, 500
 
 
+def shutdown_session(exception=None):
+    session.db_session.remove()
+
+
 def create_app():
     app = Flask(__name__)
 
@@ -34,6 +39,8 @@ def create_app():
     app.register_error_handler(NotFound, handle_not_found)
     app.register_error_handler(MethodNotAllowed, handle_method_not_allowed)
     app.register_error_handler(InternalServerError, handle_internal_server_error)
+
+    app.teardown_appcontext(shutdown_session)
 
     return app
 
