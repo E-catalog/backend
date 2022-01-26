@@ -1,5 +1,8 @@
 FROM python:3.9-slim
 
+ENV PYTHONUNBUFFERED=True \
+    POETRY_VIRTUALENVS_CREATE=False
+
 WORKDIR /app
 
 RUN pip install poetry
