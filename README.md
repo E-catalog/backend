@@ -1,8 +1,46 @@
 # Backend
 
+## About
+
+This application is a backend of our E-catalog project. It runs independently and connects to the database at one end and to the frontend app - at other end. All connections are made via the http protocol.
+
+The main function of this application is to trasfer data between database and the one who asks. You can get or push data from/to the database through our API and simple CRUD operations. They are similar for two basic instanses - Places and Individuals:
+
+```
+# get all places
+GET api/v1/places/
+
+# get a particular place
+GET api/v1/places/<uid>
+
+# create a place
+POST api/v1/places/
+
+# update a particular place
+PUT api/v1/places/<uid>
+
+# delete a particular place
+DELETE api/v1/places/<uid>
+
+# get all individuals
+GET api/v1/individuals
+
+# get a particular individual
+GET api/v1/individuals/<uid>
+
+# create an individual
+POST api/v1/individuals/
+
+# update a particular individual
+PUT api/v1/individuals/<uid>
+
+# delete a particular individual
+DELETE api/v1/individuals/<uid>
+```
+
 ## Contributing
 
-Since this is a young Python project, we assume that you already have Python >=3.6 in your system.
+Since this is a young Python project, we assume that you already have Python >=3.6 in your system. Clone this repository to your machine and follow the instructions.
 
 ### Docker
 
@@ -81,15 +119,16 @@ To run the project in the terminal use
 
 Or you can use 'Run and Debug' if you're using VS Code - the necessary *launch.json* file are already there. Use 'service' to run the app and 'create_table' to create database's tables.
 
-### Using linter
+### Using linters
 
 We use **wemake-python-styleguide** - "the strictest and most opinionated Python linter ever". Actually it's just a **flake8** plugin with some other useful plugins. Poetry files already have all dependencies, so you'll have the hole package of the linter after runnig `poetry install`.
 
-To check the project code run
+To check the hole app code run
 
 ```bash, PowerShell, CMD
     poetry run flake8 backend
+    poetry run mypy backend
 ```
 
 It will examine all python files in *backend* directory.
-If you want to check any particular python file simply use `poetry run flake8 <path/file_name>`.
+If you want to check any particular python file simply use `poetry run flake8 <path/file_name>` or the same for **mypy**.
